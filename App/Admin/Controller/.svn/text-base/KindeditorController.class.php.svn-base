@@ -1,0 +1,131 @@
+<?php
+namespace Admin\Controller;
+
+use Think\Controller;
+class KindeditorController extends Controller{
+	
+	//kindeditor编辑器初始化获取token
+	public function getToken() {
+	    $type = I('post.type');
+	    //合法性判断
+	    if (!in_array($type, array(1, 2, 3))){
+	        exit('access deny');
+	    }
+	    //参数设置
+	    header("Content-type:text/html;charset=utf-8");
+	    $config = C('PUBLIC_UPLOAD_SITEIMG_QINIU');
+	    $bucket = $config['QINIU_BUCKET'];
+	    $host = $config['QINIU_HOST'];
+	    $accessKey = $config['QINIU_AK'];
+	    $secretKey = $config['QINIU_SK'];
+	    $fileName = C('COMPANY_UINIQID').'_'.date('Ymd').'_'.date('His').rand(100, 999).'$(fname)';
+	    
+	    //参数配置
+	    $data =  array(
+	        "scope" => $bucket,
+	        "saveKey" => $fileName,
+	        "deadline" => time() + 3600
+	    );
+	    //token1用于单文件上传调用，由于Kindeditor单文件上传是通过提交给隐藏的Iframe实现，
+	    //因此要通过303重定向来返回值，因此要配置returnUrl和returnBody
+	    $data1 = array_merge($data, array('returnUrl' => $config['SITE_URL'].U('Kindeditor/uploadReturn'), 'returnBody' => '{"url": "'.$host.'/'.$fileName.'", "size": $(fsize), "name": "$(fname)"}'));
+	    $token1 = token($data1, $accessKey, $secretKey);
+	    
+	    //token2用于多文件上传时，回调服务器进行相关数据处理，比如记录上传文件的信息，
+	    //如果不需要记录，也可以不设置callbackUrl和callbackBody
+	    $data2 = array_merge($data, array('callbackUrl' => $config['SITE_URL'].U('Kindeditor/uploadCallback'), 'callbackBody' => 'url='.$host.'/'.$fileName.'&size=$(fsize)&name=$(fname)'));
+	    $token2 = token($data2, $accessKey, $secretKey);
+	    
+	    header('Content-Type:application/json; charset=utf-8');
+	    switch ($type){
+	        case 3:
+	            exit(json_encode(array('token1' => $token1, 'token2' => $token2)));
+	            break;
+	        case 2:
+	            exit(json_encode($token2));
+	            break;
+	        default:
+	            exit(json_encode($token1));
+	    }
+	}
+	
+	//单文件上传返回调用
+	public function uploadReturn() {
+	    /*
+           这里可以直接通过$_GET['upload_ret']获取自定义的返回数据，数据是经过编码的，解码后可得到json格式字符串，解码方式看下方代码
+           获取后可以进行存库等操作
+           最后一步返回的数据是按照Kindeditor的格式返回
+	     */
+	    $return = I('get.upload_ret');
+	    if (empty($return)){
+	        exit('access deny');
+	    }else{
+	        $str = json_decode(base64_decode(str_replace(array('-', '_'), array('+', '/'), $return)), true);
+	        exit('{"error":0, "url": "'.$str['url'].'"}');
+	    }
+	}
+	
+	//多文件上传返回调用
+	public function uploadCallback() {
+        /*
+        这里可以直接通过$_POST获取自定义的返回数据，比如图片名称，地址，大小等
+         获取后可以进行存库等操作
+         最后一步返回的数据，七牛云会原样返回给客户端，这里也就是按照Kindeditor的格式返回
+        */
+        exit('{"error":0, "url": "'.I('post.url').'"}');
+	}
+	
+	//Kindeditor编辑器的文件管理器
+	public function fileManage() {
+	    //七牛请求参数整理
+	    $config = C('PUBLIC_UPLOAD_SITEIMG_QINIU');
+	    $gPath = I('get.path');//不能够直接将I('get.path')放在empty()里面去会报错
+	    $path = empty($gPath) ? C('COMPANY_UINIQID') : C('COMPANY_UINIQID').'_'.$gPath;
+	    $url = '/list?'.http_build_query(array('bucket' => $config['QINIU_BUCKET'], 'delimiter' => '_', 'prefix' => $path.'_'));
+	    
+	    $sign = hash_hmac('sha1', $url."\n", $config['QINIU_SK'], true);
+	    $token = $config['QINIU_AK'].':'.str_replace(array('+', '/'), array('-', '_'), base64_encode($sign));
+	    
+	    $header = array('Host: rsf.qbox.me', 'Content-Type:application/x-www-form-urlencoded', 'Authorization: QBox '.$token);
+	    
+	    //七牛请求获取数据
+	    $curl = curl_init ();
+	    curl_setopt($curl, CURLOPT_URL, trim($config['QINIU_RSF_HOST'].$url,'\n'));
+	    curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	    curl_setopt($curl, CURLOPT_POSTFIELDS, "");
+	    $qiniuResult = json_decode(curl_exec($curl), true);
+	    curl_close($curl);
+	    
+	    //按照Kindeditor格式组合数据
+	    $file_list = array();
+	    $ext_arr = array('gif', 'jpg', 'jpeg', 'png', 'bmp');
+	    foreach ($qiniuResult['items'] as $k => $v){
+	        $file_ext = strtolower(pathinfo($v['key'], PATHINFO_EXTENSION));
+	        $file_list[] = array(
+	            'is_dir' => false,
+	            'has_file' => false,
+	            'filesize' => $v['fsize'],
+	            'is_photo' => in_array($file_ext, $ext_arr),
+	            'filename' => str_ireplace($path.'_', '', $v['key']),
+	            'datetime' => date('Y-m-d H:i:s', (int)($v['putTime']/10000000))
+	        );
+	    }
+	    
+	    foreach ($qiniuResult['commonPrefixes'] as $k => $v){
+	        $name = explode('_', $v);
+	        $file_list[] = array(
+	            'is_dir' => true,
+	            'has_file' => true,
+	            'filename' => $name[1]
+	        );
+	    }
+	    $result['moveup_dir_path'] = '';
+	    $result['current_dir_path'] = $gPath;
+	    $result['current_url'] = $config['QINIU_HOST'].'/'.$path.'_';
+	    $result['file_list'] = $file_list;
+	    
+	    header('Content-Type:application/json; charset=utf-8');
+	    exit(json_encode($result));
+	}
+}

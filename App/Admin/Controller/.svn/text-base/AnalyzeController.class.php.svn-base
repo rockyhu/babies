@@ -1,0 +1,10 @@
+<?php
+namespace Admin\Controller;
+
+class AnalyzeController extends AuthController {
+    
+	public function index(){
+		$this->display();
+	}
+	
+}

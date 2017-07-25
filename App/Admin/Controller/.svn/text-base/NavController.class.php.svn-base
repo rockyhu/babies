@@ -1,0 +1,88 @@
+<?php
+namespace Admin\Controller;
+
+class NavController extends AuthController {
+    
+	//显示菜单导航列表
+	public function index(){
+	    $Nav = D('Nav');
+	    $this->assign('navList', $Nav->getList());
+	    $this->assign('navTotal', $Nav->getNavTotal());
+		$this->display();
+	}
+	
+	//新增菜单导航
+	public function add() {
+	    $Nav = D('Nav');
+	    $this->assign('navTotal', $Nav->getNavTotal());
+	    $this->display();
+	}
+	
+	//修改菜单导航
+	public function edit() {
+	    $id = I('get.id');
+	    if(isset($id) && !empty($id)){
+    	    $Nav = D('Nav');
+    	    $this->assign('OneNav', $Nav->getOneNav($id));
+    	    $this->assign('navTotal', $Nav->getNavTotal());
+    	    $this->display();
+	    }
+	}
+	
+	//获取菜单导航
+	public function getNav() {
+	    //获取url存在的导航栏目
+	    $Nav = D('Nav');
+	    $this->ajaxReturn($Nav->getNav());
+	}
+	
+	//获取主菜单
+	public function getListMain() {
+	    if (IS_AJAX) {
+	        $Nav = D('Nav');
+	        $this->ajaxReturn($Nav->getListMain(I('get.id')));
+	    } else {
+	        $this->error('非法操作！');
+	    } 
+	}
+	
+	//新增菜单导航
+	public function addNav() {
+		if (IS_AJAX) {
+			$Nav = D('Nav');
+			echo $Nav->addNav(I('post.nid'), I('post.text'), I('post.url'), I('post.iconCls'));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	//编辑菜单
+	public function update() {
+	    if (IS_AJAX) {
+	        $Nav = D('Nav');
+	        echo $Nav->update(I('post.id'), I('post.nid'), I('post.text'), I('post.url'), I('post.iconCls'), I('post.sort'));
+	    } else {
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	//获取一个菜单
+	public function getOneNav() {
+	    if (IS_AJAX) {
+	        $Nav = D('Nav');
+	        $this->ajaxReturn($Nav->getOneNav(I('post.id')));
+	    } else {
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	//删除菜单
+	public function remove() {
+	    if(IS_AJAX){
+	        $Nav = D('Nav');
+	        echo $Nav->remove(I('post.id'), I('post.text'), I('post.nid'));
+	    }else{
+	        $this->error('非法操作！');
+	    }
+	}
+}

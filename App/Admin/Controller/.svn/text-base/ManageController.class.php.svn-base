@@ -1,0 +1,69 @@
+<?php
+namespace Admin\Controller;
+
+class ManageController extends AuthController {
+    
+	//显示管理员列表
+	public function index(){
+		$Manage = D('Manage');
+		$this->assign('manageList', $Manage->getManageList());
+		$this->assign('manageTotal', $Manage->getManageTotal());
+		$this->display();
+	}
+	
+	//新增
+	public function add() {
+	    $Manage = D('Manage');
+	    $this->assign('manageTotal', $Manage->getManageTotal());
+	    $this->display();
+	}
+	
+	//修改
+	public function edit() {
+	    $Manage = D('Manage');
+	    $this->assign('OneManage', $Manage->getOneManage(I('get.id')));
+	    $this->assign('manageTotal', $Manage->getManageTotal());
+	    $this->display();
+	}
+	
+	//获取管理员列表
+	public function getList() {
+		if (IS_AJAX) {
+			$Manage = D('Manage');
+			$this->ajaxReturn($Manage->getList(I('post.page'),I('post.rows'),I('post.sort'),I('post.order')));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	//新增管理员
+	public function addManage() {
+		if (IS_AJAX) {
+			$Manage = D('Manage');
+			echo $Manage->addManage(I('post.manager'), I('post.password'), I('post.role'));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	//修改管理员
+	public function update() {
+	    if (IS_AJAX) {
+	        $Manage = D('Manage');
+	        echo $Manage->update(I('post.id'), I('post.password'), I('post.role'));
+	    } else {
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	//删除管理员
+    public function remove() {
+   		if(IS_AJAX){
+			$Manage = D('Manage');
+			echo $Manage->remove(I('post.id'));
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+	
+}

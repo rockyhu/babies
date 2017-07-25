@@ -1,0 +1,65 @@
+<?php
+namespace Admin\Controller;
+use Think\Controller;
+use Think\Auth;
+
+class AuthController extends Controller {
+	
+	//构造方法(thinkphp的构造方法_initialize,自动执行)
+	protected function _initialize() {
+		if(!session('admin')){
+			$this->redirect('Login/index');
+		}
+		
+		if(CONTROLLER_NAME != 'Index'){//首页都有权限
+		    $Auth = new Auth();
+		    if(!$Auth->check(MODULE_NAME.'/'.CONTROLLER_NAME.'/', session('admin.id'))){
+		        header("Content-type: text/html; charset=utf-8");
+		        echo '<p style="margin:10px;text-align:center;color:red;">对不起，您没有权限操作此模块！</p>';
+		        exit();
+		    }  
+		}
+        
+		//运行公用导航
+		$this->getNav();
+		
+	}
+	
+	//根据权限获取菜单栏目
+	private function getNav() {
+	    //公用导航
+	    $Auth = new Auth();
+	    $rules = $Auth->getGroups(session('admin.id'));
+	    $groups = $rules[0]['rules'];//2,3,4,5
+	    $AuthRule = M('AuthRule');
+	    $map['id'] = array('in', $groups);
+	    $obj = $AuthRule->field('title')->where($map)->select();
+	    $texts = '';
+	    foreach ($obj as $key=>$value){
+	        $texts .= $value['title'].',';
+	    }
+	    $Nav = D('Nav');
+	    $this->assign('allNavMenu',$Nav->getRoleNav(substr($texts, 0, -1)));
+	    
+	    //默认选中导航
+	    //1.获取当前的url
+	    if(APP_DEBUG){//调试阶段
+		    $url = ucfirst(substr(__CONTROLLER__, strpos(__CONTROLLER__, 'Admin')+6)).'/index';
+		}else{//部署阶段
+			$url = substr(__CONTROLLER__, strpos(__CONTROLLER__, 'admin')+6);
+			if(strpos($url,'_') !== false){
+				$pos = strpos($url,'_');
+				$url = ucfirst(substr($url, 0, $pos)).ucfirst(substr($url, $pos+1)).'/index';
+			}else{
+				$url = ucfirst($url).'/index';
+			}
+		}
+	    //2.通过url进行查找
+	    $sUrl = $Nav->getOneNavByUrl($url);
+
+	    $this->assign('sUrl', $sUrl ? $sUrl : $url);//$url = Index/index时表示是控制面板
+	}
+	
+	
+	
+}

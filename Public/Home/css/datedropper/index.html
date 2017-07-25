@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>演示：有趣的日期和时间选择插件-Datedropper</title>
+<meta name="keywords" content="jquery" />
+<meta name="description" content="Helloweba演示平台，演示XHTML、CSS、jquery、PHP案例和示例" />
+<link rel="stylesheet" type="text/css" href="http://www.helloweba.com/demo/css/main.css" />
+<link rel="stylesheet" type="text/css" href="datedropper.css">
+<link rel="stylesheet" type="text/css" href="timedropper.min.css">
+<style type="text/css">
+.demo{margin:80px auto 40px auto;width:320px}
+.input{padding:6px;border:1px solid #d3d3d3}
+</style>
+
+</head>
+
+<body>
+<div id="header">
+   <div id="logo"><h1><a href="http://www.helloweba.com" title="返回helloweba首页">helloweba</a></h1></div>
+</div>
+
+<div id="main">
+   <h2 class="top_title"><a href="http://www.helloweba.com/view-blog-360.html">有趣的日期和时间选择插件-Datedropper</a></h2>
+  
+	<div class="demo">
+		<p>请选择日期：<input type="text" class="input" id="pickdate" /></p><br/>
+		<p>请选择时间：<input type="text" class="input" id="picktime" /></p>
+	</div>
+	
+</div>
+<script type="text/javascript" src="http://libs.useso.com/js/jquery/1.9.0/jquery.min.js"></script>
+<script src="datedropper.min.js"></script>
+<script src="timedropper.min.js"></script>
+<script>
+$("#pickdate").dateDropper({
+	animate: false,
+	//format: 'Y-m-d',
+	format: 'Y-m',
+	maxYear: '2020'
+});
+$("#picktime").timeDropper({
+	meridians: false,
+	format: 'HH:mm',
+	//meridians: false
+});
+</script>
+<div id="footer">
+    <p>Powered by helloweba.com  允许转载、修改和使用本站的DEMO，但请注明出处：<a href="http://www.helloweba.com">www.helloweba.com</a></p>
+</div>
+
+</body>
+</html>

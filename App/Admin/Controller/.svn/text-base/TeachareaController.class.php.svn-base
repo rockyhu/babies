@@ -1,0 +1,79 @@
+<?php
+namespace Admin\Controller;
+class TeachareaController extends AuthController {
+    
+	public function index(){
+	    $Teacharea = D('Teacharea');
+	    $this->assign('TeachareaList', $Teacharea->getList());
+	    $this->assign('teachareaTotal', $Teacharea->getTeachareaTotal());
+		$this->display();
+	}
+	
+	public function add() {
+	    $Teacharea = D('Teacharea');
+	    $City = D('City');
+	    $this->assign('teachareaTotal', $Teacharea->getTeachareaTotal());
+	    $this->assign('MainPCity', $City->getMainList());
+	    $this->display();
+	}
+	
+	public function edit() {
+	    $id = I('get.id');
+	    if(isset($id) && !empty($id)){
+    	    $Teacharea = D('Teacharea');
+    	    $City = D('City');
+    	    $this->assign('teachareaTotal', $Teacharea->getTeachareaTotal());
+    	    $this->assign('OneTeacharea', $Teacharea->getOneTeacharea($id));
+    	    $this->assign('MainPCity', $City->getMainList());
+    	    $this->display();
+	    }
+	}
+	
+	public function addTeacharea() {
+		if (IS_AJAX) {
+			$Teacharea = D('Teacharea');
+			echo $Teacharea->addTeacharea(I('post.name'), I('post.address'), I('post.location'), I('post.thumb', '', false), I('post.info'), I('post.cityid'));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	public function update() {
+	    if (IS_AJAX) {
+	       $Teacharea = D('Teacharea');
+	       echo $Teacharea->update(I('post.id'), I('post.name'), I('post.address'), I('post.location'), I('post.thumb', '', false), I('post.info'), I('post.cityid'));
+	    } else {
+	        $this->error('非法操作！');
+	    }
+	}
+	
+    public function remove() {
+   		if(IS_AJAX){
+			$Teacharea = D('Teacharea');
+			echo $Teacharea->remove(I('post.id'));
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+	
+	public function getCityTeacharea() {
+		if(IS_AJAX){
+			$Teacharea = D('Teacharea');
+			$this->assign('cityTeacharea', $Teacharea->getCityTeacharea(I('post.cityid')));
+			$this->display();
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+	
+	public function getSelectedCityTeacharea() {
+		if(IS_AJAX){
+			$Teacharea = D('Teacharea');
+			$this->assign('cityTeacharea', $Teacharea->getCityTeacharea(I('post.cityid')));
+			$this->display();
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+	
+}

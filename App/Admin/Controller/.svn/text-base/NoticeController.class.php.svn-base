@@ -1,0 +1,56 @@
+<?php
+namespace Admin\Controller;
+
+class NoticeController extends AuthController {
+    
+    public function index() {
+        $Notice = D('Notice');
+        $this->assign('noticeList', $Notice->getList());
+        $this->assign('noticeTotal', $Notice->getNoticeTotal());
+        $this->display();
+    }
+    
+    public function add() {
+    	$Notice = D('Notice');
+        $this->assign('noticeTotal', $Notice->getNoticeTotal());
+        $this->display();
+    }
+    
+    public function edit() {
+    	$id = I('get.id');
+    	if(isset($id) && !empty($id)){
+    		$Notice = D('Notice');
+        	$this->assign('noticeTotal', $Notice->getNoticeTotal());
+    		$this->assign('OneNotice', $Notice->getOneNotice($id));
+    		$this->display();
+    	}
+    }
+    
+    public function addNotice() {
+        if (IS_AJAX) {
+            $Notice = D('Notice');
+            echo $Notice->addNotice(I('post.title'), I('post.content'), I('post.type'));
+        } else {
+            $this->error('非法操作！');
+        }
+    }
+    
+    public function update() {
+    	if (IS_AJAX) {
+    		$Notice = D('Notice');
+    		echo $Notice->update(I('post.id'), I('post.title'), I('post.content'), I('post.type'));
+    	} else {
+    		$this->error('非法操作！');
+    	}
+    }
+    
+    public function remove() {
+        if(IS_AJAX){
+            $Notice = D('Notice');
+            echo $Notice->remove(I('post.id'));
+        }else{
+            $this->error('非法操作！');
+        }
+    }
+    
+}

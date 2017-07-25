@@ -1,0 +1,126 @@
+<?php
+namespace Admin\Controller;
+
+class CoachController extends AuthController {
+    
+	public function index(){
+	    $Coach = D('Coach');
+	    $this->assign('coachList', $Coach->getList());
+	    $this->assign('coachTotal', $Coach->getCoachTotal());
+		$this->display();
+	}
+	
+	public function add() {
+	    $Coach = D('Coach');
+	    $this->assign('coachTotal', $Coach->getCoachTotal());
+	    $this->display();
+	}
+	
+	public function edit() {
+	    $id = I('get.id');
+	    if(isset($id) && !empty($id)){
+    	    $Coach = D('Coach');
+    	    $this->assign('OneCoach', $Coach->getOneCoach($id));
+    	    $this->assign('coachTotal', $Coach->getCoachTotal());
+    	    $this->display();
+	    }
+	}
+	
+	public function addCoach() {
+		if (IS_AJAX) {
+			$Coach = D('Coach');
+			$Coachid = $Coach->addCoach(I('post.realname'), I('post.phone'), I('post.idcard'), I('post.coachcard'), I('post.sex'), I('post.face', '', false), I('post.age'), I('post.educateage'), I('post.vehicletype'), I('post.carlicense'), I('post.registrationdate'), I('post.school'), I('post.courseid'), I('post.cityid'), I('post.teachareaid'));
+			if($Coachid) {
+				if($Coachid){
+					//计算科目价格中最低价格
+					$priceArray = [];
+					if(I('post.price1')) $priceArray[] = I('post.price1');
+					if(I('post.price2')) $priceArray[] = I('post.price2');
+					if(I('post.price3')) $priceArray[] = I('post.price3');
+					sort($priceArray);//排序
+					$lowerprice = $priceArray[0];
+					$CoachStatistics = D('CoachStatistics');
+					$CoachStatistics->addCoachStatistics($Coachid, $lowerprice);
+				}
+				//设置繁忙时间
+				$CoachPeriodDefault = D('CoachPeriodDefault');
+				$CoachPeriodDefault->addCoachPeriodDefault($Coachid, I('post.workdaydefaultbusy'), I('post.offdaydefaultbusy'));
+				//更新训练场的教练统计
+				if(I('post.teachareaid')){
+					$Teacharea = D('Teacharea');
+					$Teacharea->updateTeachareaCoachcount(I('post.teachareaid'), 'inc');
+				}
+				//添加教练科目价格
+				$CoachCoursePrice = D('CoachCoursePrice');
+				$CoachCoursePrice->addCoachCoursePrice($Coachid, I('post.courseid'), I('post.price1'), I('post.price2'), I('post.price3'));
+			}
+			echo $Coachid;
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	public function update() {
+	    if (IS_AJAX) {
+	    	//更新教练信息
+	        $Coach = D('Coach');
+	        $Coach->update(I('post.id'), I('post.realname'), I('post.phone'), I('post.idcard'), I('post.coachcard'), I('post.sex'), I('post.face', '', false), I('post.age'), I('post.educateage'), I('post.vehicletype'), I('post.carlicense'), I('post.registrationdate'), I('post.school'), I('post.courseid'), I('post.cityid'), I('post.teachareaid'), I('post.state'));
+			
+	        //计算科目价格中最低价格
+	        if(I('post.id')){
+	        	$priceArray = [];
+	        	if(I('post.price1')) $priceArray[] = I('post.price1');
+	        	if(I('post.price2')) $priceArray[] = I('post.price2');
+	        	if(I('post.price3')) $priceArray[] = I('post.price3');
+	        	sort($priceArray);//排序
+	        	$lowerprice = $priceArray[0];
+	        	$CoachStatistics = D('CoachStatistics');
+	        	$CoachStatistics->updateCoachStatistics(I('post.id'), $lowerprice);
+	        }
+        	
+			//更新教练默认课时表信息
+	        $CoachPeriodDefault = D('CoachPeriodDefault');
+			$CoachPeriodDefault->editCoachPeriodDefault(I('post.id'), I('post.workdaydefaultbusy'), I('post.offdaydefaultbusy'));
+	        //更新教练教学科目价格信息
+			$CoachCoursePrice = D('CoachCoursePrice');
+			$CoachCoursePrice->updateCoachCoursePrice(I('post.id'), I('post.courseid'), I('post.price1'), I('post.price2'), I('post.price3'), I('post.priceid1'), I('post.priceid2'), I('post.priceid3'));
+			echo 1;
+	    } else {
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	public function remove() {
+	    if(IS_AJAX){
+	        $Coach = D('Coach');
+	        echo $Coach->remove(I('post.id'));
+	    }else{
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	public function getCoach() {
+		if(IS_AJAX){
+			$Coach = D('Coach');
+			$this->assign('coachList', $Coach->getCoach(I('post.teachareaid')));
+			$this->display();
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+	
+	public function getOneCoachPeriod() {
+		if(IS_AJAX){
+			$CoachPeriod = D('CoachPeriod');
+			$this->assign('coachPeriod', $CoachPeriod->getOneCoachPeriod(I('post.coachid')));
+			$this->display('Period/coachPeriod');
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+	
+	
+	
+	
+	
+}

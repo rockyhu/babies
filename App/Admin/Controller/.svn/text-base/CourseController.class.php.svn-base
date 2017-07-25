@@ -1,0 +1,64 @@
+<?php
+namespace Admin\Controller;
+
+class CourseController extends AuthController {
+    
+	public function index(){
+	    $Course = D('Course');
+	    $this->assign('courseList', $Course->getList());
+	    $this->assign('courseTotal', $Course->getCourseTotal());
+		$this->display();
+	}
+	
+	public function add() {
+	    $Course = D('Course');
+	    $this->assign('courseTotal', $Course->getCourseTotal());
+	    $this->display();
+	}
+	
+	public function edit() {
+	    $id = I('get.id');
+	    if(isset($id) && !empty($id)){
+    	    $Course = D('Course');
+    	    $this->assign('OneCourse', $Course->getOneCourse($id));
+    	    $this->assign('courseTotal', $Course->getCourseTotal());
+    	    $this->display();
+	    }
+	}
+	
+	public function addCourse() {
+		if (IS_AJAX) {
+			$Course = D('Course');
+			echo $Course->addCourse(I('post.coursename'));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	public function update() {
+	    if (IS_AJAX) {
+	        $Course = D('Course');
+	        echo $Course->update(I('post.id'), I('post.coursename'), I('post.sort'));
+	    } else {
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	public function remove() {
+	    if(IS_AJAX){
+	        $Course = D('Course');
+	        echo $Course->remove(I('post.id'));
+	    }else{
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	public function getCourse() {
+		if(IS_AJAX){
+			$Course = D('Course');
+			$this->ajaxReturn($Course->getCourse());
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+}

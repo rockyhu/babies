@@ -1,0 +1,35 @@
+<?php
+namespace Admin\Controller;
+
+class OrderController extends AuthController {
+    
+	//显示订单
+	public function index(){
+		$Order = D('Order');
+		$this->assign('OrderList', $Order->getList());
+		$this->assign('orderTotal', $Order->getOrderTotal());
+		$this->display();
+	}
+	
+	//查看订单
+	public function edit() {
+		$id = I('get.id');
+		if(isset($id) && !empty($id)){
+			$Order = D('Order');
+			$this->assign('orderTotal', $Order->getOrderTotal());
+			$this->assign('OneOrder', $Order->getOneOrder($id));
+			$this->display();
+		}
+	}
+	
+	//删除订单
+	public function remove() {
+		if(IS_AJAX){
+			$Order = D('Order');
+			echo $Order->remove(I('post.id'));
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+	
+}

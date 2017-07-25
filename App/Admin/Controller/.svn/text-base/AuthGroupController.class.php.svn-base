@@ -1,0 +1,78 @@
+<?php
+namespace Admin\Controller;
+
+class AuthGroupController extends AuthController {
+	//显示角色列表
+	public function index(){
+	    $AuthGroup = D('AuthGroup');
+	    $this->assign('authList', $AuthGroup->getList());
+	    $this->assign('authTotal', $AuthGroup->getAuthGroupTotal());
+		$this->display();
+	}
+	
+	//新增
+	public function add() {
+	    $AuthGroup = D('AuthGroup');
+	    $this->assign('authTotal', $AuthGroup->getAuthGroupTotal());
+	    $this->display();
+	}
+	
+	//修改
+	public function edit() {
+	    $AuthGroup = D('AuthGroup');
+	    $this->assign('oneAuthGroup', $AuthGroup->getOneAuthGroup(I('get.id')));
+	    $this->assign('authTotal', $AuthGroup->getAuthGroupTotal());
+	    $this->display();
+	}
+	
+	//获取所有角色
+	public function getListAll() {
+		if (IS_AJAX) {
+			$AuthGroup = D('AuthGroup');
+			$this->ajaxReturn($AuthGroup->getListAll());
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	//获取一个角色
+	public function getOneAuthGroup() {
+		if (IS_AJAX) {
+			$AuthGroup = D('AuthGroup');
+			$this->ajaxReturn($AuthGroup->getOneAuthGroup(I('post.id')));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	//添加角色
+	public function addRole() {
+		if (IS_AJAX) {
+			$AuthGroup = D('AuthGroup');
+			echo $AuthGroup->addRole(I('post.title'), I('post.rules'));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	//编辑角色
+	public function editRole() {
+		if (IS_AJAX) {
+			$AuthGroup = D('AuthGroup');
+			echo $AuthGroup->editRole(I('post.id'), I('post.title'), I('post.rules'));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	//删除角色
+	public function remove() {
+	    if(IS_AJAX){
+	        $AuthGroup = D('AuthGroup');
+	        echo $AuthGroup->remove(I('post.id'));
+	    }else{
+	        $this->error('非法操作！');
+	    }
+	}
+    
+}

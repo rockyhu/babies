@@ -1,0 +1,41 @@
+<?php
+namespace Admin\Controller;
+
+class StudentController extends AuthController {
+    
+    public function index(){
+        $Student = D('Student');
+        $this->assign('studentList', $Student->getList());
+        $this->assign('studentTotal', $Student->getStudentTotal());
+        $this->display();
+    }
+    
+    public function edit() {
+    	$id = I('get.id');
+    	if(isset($id) && !empty($id)){
+    		$Student = D('Student');
+    		$this->assign('studentTotal', $Student->getStudentTotal());
+    		$this->assign('OneStudent', $Student->getOneStudent($id));
+    		$this->display();
+    	}
+    }
+    
+    public function update() {
+        if (IS_AJAX) {
+	        $Student = D('Student');
+	        $this->ajaxReturn($Student->update(I('post.id'), I('post.state')));
+	    } else {
+	        $this->error('非法操作！');
+	    }
+    }
+    
+    public function remove() {
+    	if(IS_AJAX){
+    		$Student = D('Student');
+    		echo $Student->remove(I('post.id'));
+    	}else{
+    		$this->error('非法操作！');
+    	}
+    }
+    
+}

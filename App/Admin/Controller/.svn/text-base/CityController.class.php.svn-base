@@ -1,0 +1,83 @@
+<?php
+namespace Admin\Controller;
+
+class CityController extends AuthController {
+    
+	public function index(){
+	    $City = D('City');
+	    $this->assign('cityList', $City->getList());
+	    $this->assign('cityTotal', $City->getCityTotal());
+		$this->display();
+	}
+	
+	public function add() {
+	    $City = D('City');
+	    $this->assign('cityTotal', $City->getCityTotal());
+	    $this->display();
+	}
+	
+	//修改菜单导航
+	public function edit() {
+	    $id = I('get.id');
+	    if(isset($id) && !empty($id)){
+    	    $City = D('City');
+    	    $this->assign('OneCity', $City->getOneCity($id));
+    	    $this->assign('cityTotal', $City->getCityTotal());
+    	    $this->display();
+	    }
+	}
+	
+	public function getListMain() {
+	    if (IS_AJAX) {
+	        $City = D('City');
+	        $this->ajaxReturn($City->getListMain());
+	    } else {
+	        $this->error('非法操作！');
+	    } 
+	}
+	
+	public function addCity() {
+		if (IS_AJAX) {
+			$City = D('City');
+			echo $City->addCity(I('post.parentid'), I('post.cityname'));
+		} else {
+			$this->error('非法操作！');
+		}
+	}
+	
+	public function update() {
+	    if (IS_AJAX) {
+	        $City = D('City');
+	        echo $City->update(I('post.id'), I('post.parentid'), I('post.cityname'), I('post.sort'));
+	    } else {
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	public function getOneCity() {
+	    if (IS_AJAX) {
+	        $City = D('City');
+	        $this->ajaxReturn($City->getOneCity(I('post.id')));
+	    } else {
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	public function remove() {
+	    if(IS_AJAX){
+	        $City = D('City');
+	        echo $City->remove(I('post.id'), I('post.parentid'));
+	    }else{
+	        $this->error('非法操作！');
+	    }
+	}
+	
+	public function getCity() {
+		if(IS_AJAX){
+			$City = D('City');
+			$this->ajaxReturn($City->getCity());
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+}

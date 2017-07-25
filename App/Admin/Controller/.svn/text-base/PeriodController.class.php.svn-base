@@ -1,0 +1,25 @@
+<?php
+namespace Admin\Controller;
+
+class PeriodController extends AuthController {
+    
+	public function index(){
+		//whetherHoliday(time());
+		//print_r(whetherHoliday('1443996000,1444082400,1444168800,1444255200,1444341600'));
+		//print_r(getCurrentAndNextWeekdayAsTime());
+		//print_r(busyOrBookedPeriodToarray('07:00|09:00'));
+		
+		//$CoachPeriod = D('CoachPeriod');
+		//print_r($CoachPeriod->getOneCoachPeriod(3));
+		$this->display();
+	}
+
+	public function getCity() {
+		if(IS_AJAX){
+			$City = D('City');
+			$this->ajaxReturn($City->getCity());
+		}else{
+			$this->error('非法操作！');
+		}
+	}
+}
