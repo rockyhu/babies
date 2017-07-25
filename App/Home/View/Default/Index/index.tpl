@@ -12,7 +12,7 @@
 </head>
 <body>
 <include file="Public/header" />
-
+<div id="container">前台内容</div>
 <include file="Public/footer" />
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript">
