@@ -11,8 +11,6 @@ $(function () {
             if($(".select4").length) {
                 $(".select4").select2({
                     language: "zh-CN",
-                    multiple: false,
-                    closeOnSelect: false,//选择后不关闭下拉框，多选时非常方便
                     ajax: {
                         url: ThinkPHP['MODULE'] + '/DocumentNav/getMainNav',
                         delay: 250,
@@ -20,15 +18,6 @@ $(function () {
                             return {results: data};
                         },
                     }
-                });
-            }
-
-            //初始化图片上传
-            if($('#documentnav-add').length || $('#documentnav-edit').length){
-                //缩略图上传
-                Plupload.create({
-                    buttonid : 'plupload-thumb-btn',
-                    multi : false
                 });
             }
 
@@ -140,8 +129,8 @@ $(function () {
 				},
 				messages : {
 					text : {
-						required : '请输入产品分类名称',
-						rangelength : $.validator.format('产品分类名称必须在{0}-{1}位之间')
+						required : '请输入分类名称',
+						rangelength : $.validator.format('分类名称必须在{0}-{1}位之间')
 					}
 				}
 			});
@@ -216,17 +205,50 @@ $(function () {
 				},
 				messages : {
 					text : {
-						required : '请输入产品分类名称',
-						rangelength : $.validator.format('产品分类名称必须在{0}-{1}位之间')
+						required : '请输入分类名称',
+						rangelength : $.validator.format('分类名称必须在{0}-{1}位之间')
 					}
 				}
 			});
 		},
+        //多篇与单篇切换
+		change_kind : function () {
+			if($('.textarea').length) {
+				var _kind_val = $('select[name="kind"]').val();
+				if(_kind_val < 1) {
+					documentnav_action.kindeditor($('.textarea'));
+					$('#documentnav-content').show();
+				}
+                $('select[name="kind"]').change(function () {
+                    if($(this).val()<1) {
+                        documentnav_action.kindeditor($('.textarea'));
+                        $('#documentnav-content').show();
+                    }else {
+                        $('#documentnav-content').hide();
+					}
+				});
+            }
+		},
+        //初始化文本编辑器
+        kindeditor : function (textAreaName) {
+            var editor = KindEditor.create(textAreaName,{
+                uploadJson : ThinkPHP['KINDEDITOR']+'/php/upload_json.php',
+                fileManagerJson : ThinkPHP['KINDEDITOR']+'/php/file_manager_json.php',
+                resizeType:0,//设置不能拖动
+                langType:'zh_CN',//设置编辑器的语言
+                autoHeightMode : true,//自动高度
+                afterCreate : function() {
+                    this.loadPlugin('autoheight');
+                },
+                afterBlur:function () {this.sync();}//解决同步textarea数据的问题
+            });
+        },
 		//页面初始化
 		init:function(){
 			documentnav_action.elements_init();
 			documentnav_action.add_documentnav();
 			documentnav_action.edit_documentnav();
+			documentnav_action.change_kind();
 		}
 	};
 	//运行

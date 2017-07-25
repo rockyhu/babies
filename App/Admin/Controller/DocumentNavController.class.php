@@ -31,7 +31,7 @@ class DocumentNavController extends AuthController {
 	    $id = I('get.id');
 	    if(isset($id) && !empty($id)){
             $this->getAuthNavDos();
-    	    $this->assign('OneDocumentNav', D('DocumentNav')->getOneProductNav($id));
+    	    $this->assign('OneDocumentNav', D('DocumentNav')->getOneDocumentNav($id));
     	    $this->display();
 	    }
 	}
@@ -56,7 +56,7 @@ class DocumentNavController extends AuthController {
 	//新增产品分类
 	public function addDocumentNav() {
 		if (IS_AJAX) {
-			echo D('DocumentNav')->addDocumentNav(I('post.pnid'), I('post.text'), I('post.thumb', '', false), I('post.info'), I('post.ishome'), I('post.isshow'));
+			echo D('DocumentNav')->addDocumentNav(I('post.nnid'), I('post.text'), I('post.content'), I('post.kind'), I('post.isshow'));
 		} else {
 			$this->error('非法操作！');
 		}
@@ -65,7 +65,7 @@ class DocumentNavController extends AuthController {
 	//编辑产品分类
 	public function update() {
 	    if (IS_AJAX) {
-	        echo D('DocumentNav')->update(I('post.id'), I('post.pnid'), I('post.text'), I('post.thumb', '', false), I('post.sort'), I('post.info'), I('post.ishome'), I('post.isshow'));
+	        echo D('DocumentNav')->update(I('post.id'), I('post.nnid'), I('post.text'), I('post.sort'), I('post.content'), I('post.kind'), I('post.isshow'));
 	    } else {
 	        $this->error('非法操作！');
 	    }

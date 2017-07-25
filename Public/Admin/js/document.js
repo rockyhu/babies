@@ -53,8 +53,8 @@ baseTable = {
             //添加状态
             var status_html = '<select name="status" class="form-control input-sm">'+
                 '<option value="-1" selected>按状态筛选</option>'+
-                '<option value="1">上架</option>'+
-                '<option value="0">下架</option>'+
+                '<option value="1">已发布</option>'+
+                '<option value="0">待发布</option>'+
                 '</select> ';
             $('.searchbox-all').append(status_html);
 
@@ -68,10 +68,7 @@ baseTable = {
                 '<option value="isrecommand">推荐</option>'+
                 '<option value="isnew">新品</option>'+
                 '<option value="ishot">热卖</option>'+
-                '<option value="isdiscount">促销</option>'+
-                '<option value="issendfree">包邮</option>'+
-                '<option value="istime">限时</option>'+
-                '<option value="isnodiscount">不参与折扣</option>'+
+                '<option value="istop">置顶</option>'+
                 '</select> ';
             $('.searchbox-all').append(shuxing_html);
 
@@ -80,8 +77,8 @@ baseTable = {
             });
 
             //添加一级分类筛选
-            var pnid_html = '<select name="pnid" class="form-control input-sm" style="width:120px;">';
-            var pnidArr = ThinkPHP['productnavlist'];
+            var pnid_html = '<select name="nnid" class="form-control input-sm" style="width:120px;">';
+            var pnidArr = ThinkPHP['documentnavlist'];
             pnid_html += '<option value="-1" selected>按一级分类筛选</option>';
             for(var i=0;i<pnidArr.length;i++) {
                 //console.log(pnidArr[i]['child']);
@@ -93,7 +90,7 @@ baseTable = {
                 '</select>';
             $('.searchbox-all').append(pnid_html);
 
-            $('select[name="pnid"]').on('change', function () {
+            $('select[name="nnid"]').on('change', function () {
                 //调整二级分类栏目的选项
                 var $child = $(this).find('option:selected').data('child');
                 var $child_option = '<option value="-1" selected>按二级分类筛选</option>';
@@ -108,10 +105,10 @@ baseTable = {
             });
 
             //排序
-            var usertype_html = '<select name="marketprice" class="form-control input-sm">'+
+            var usertype_html = '<select name="order" class="form-control input-sm">'+
                 '<option value="默认排序">默认排序</option>'+
-                '<option value="asc">按价格升序排序</option>'+
-                '<option value="desc">按价格降序排序</option>'+
+                '<option value="create">按时间倒序排序</option>'+
+                '<option value="readcount">按阅读数倒序排序</option>'+
                 '</select>';
             $('.searchbox-all').append(usertype_html);
 
@@ -209,7 +206,7 @@ $(function () {
 
             //选中一级分类,筛选出二级分类
             if($('#document-add').length || $('#document-edit').length) {
-                $('select[name="pnid"]').on('change', function () {
+                $('select[name="nnid"]').on('change', function () {
                     var _selected_child = $(this).find('option:selected').data('child');
                     var _options = '<option value="-1">请选择二级分类</option>';
                     for(var i=0,len = _selected_child.length;i<len;i++) {

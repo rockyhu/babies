@@ -28,21 +28,21 @@ class DocumentNavModel extends Model{
 	    //存在搜索条件
 	    if(strlen($search_value)>0){
 	        $obj = $this
-                ->join(array('a LEFT JOIN __DOCUMENT_NAV__ b ON a.pnid=b.id'))
-                ->field('a.id,a.text,a.thumb,a.sort,a.pnid,a.ishome,a.isshow,a.create,b.text as ntext')
+                ->join(array('a LEFT JOIN __DOCUMENT_NAV__ b ON a.nnid=b.id'))
+                ->field('a.id,a.text,a.sort,a.nnid,a.kind,a.isshow,a.create,b.text as ntext')
                 ->where("a.text LIKE '%{$search_value}%' OR b.text LIKE '%{$search_value}%'")
                 ->limit(intval($start), intval($length))
                 ->order(array('a.sort'=>'ASC'))
                 ->select();
 	        //条件过滤后记录数 必要
 	        $recordsFiltered = $this
-                ->join(array('a LEFT JOIN __DOCUMENT_NAV__ b ON a.pnid=b.id'))
+                ->join(array('a LEFT JOIN __DOCUMENT_NAV__ b ON a.nnid=b.id'))
                 ->where("a.text LIKE '%{$search_value}%' OR b.text LIKE '%{$search_value}%'")
                 ->count();
 	    }else{
 	        $obj = $this
-                ->join(array('a LEFT JOIN __DOCUMENT_NAV__ b ON a.pnid=b.id'))
-                ->field('a.id,a.text,a.thumb,a.sort,a.pnid,a.ishome,a.isshow,a.create,b.text as ntext')
+                ->join(array('a LEFT JOIN __DOCUMENT_NAV__ b ON a.nnid=b.id'))
+                ->field('a.id,a.text,a.kind,a.sort,a.nnid,a.isshow,a.create,b.text as ntext')
                 ->limit(intval($start), intval($length))
                 ->order(array('a.sort'=>'ASC'))
                 ->select();
@@ -51,14 +51,8 @@ class DocumentNavModel extends Model{
 	
 	    $list = [];//返回数组
 	    foreach ($obj as $key=>$value) {
-	        //是否存在缩略图
-            if($value['thumb']) {
-                $thumbObj = json_decode($value['thumb']);
-                $value['thumb'] = C('SITE_URL').substr($thumbObj->source, 2);
-                $obj[$key]['thumb'] = '<img src="'.$value['thumb'].'" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;">';
-            }
-            //是否推荐
-            $obj[$key]['ishome'] = $value['ishome'] ? '<label class="label label-success">是</label>' : '<label class="label label-warning">否</label>';
+            //分类类型
+            $obj[$key]['kind'] = $value['kind'] ? '<label class="label label-success">多篇</label>' : '<label class="label label-warning">单篇</label>';
             //是否显示
             $obj[$key]['isshow'] = $value['isshow'] ? '<label class="label label-success">是</label>' : '<label class="label label-warning">否</label>';
             //是否显示
@@ -66,7 +60,7 @@ class DocumentNavModel extends Model{
 
             //权限处理
             $btn_html = '';
-            if(in_array('DocumentNav/add', session('pageNavDos')) && !$value['pnid']) {
+            if(in_array('DocumentNav/add', session('pageNavDos')) && !$value['nnid']) {
                 $btn_html .= '<a href="'.U("DocumentNav/add",array('id'=>$value['id'])).'" class="btn btn-xs btn-primary" title="添加子分类"><i class="ion-ios-plus-outline"></i></a> ';
             }
             if(in_array('DocumentNav/edit', session('pageNavDos'))) {
@@ -80,10 +74,9 @@ class DocumentNavModel extends Model{
 	            $key+1,
                 $obj[$key]['id'],
 	            $obj[$key]['text'],
-                $obj[$key]['thumb'],
+                $obj[$key]['kind'],
 	            $obj[$key]['sort'],
                 $obj[$key]['ntext'],
-                $obj[$key]['ishome'],
                 $obj[$key]['isshow'],
 	            $obj[$key]['create'],
                 $btn_html
@@ -113,7 +106,7 @@ class DocumentNavModel extends Model{
      * @return mixed
      */
     public function getMainNav() {
-        $navlist = $this->field('id,text')->where("pnid=0")->order('sort ASC')->select();
+        $navlist = $this->field('id,text')->where("nnid=0")->order('sort ASC')->select();
         $select = array(//设置默认选中的菜单
             array(
                 'id'=>-1,
@@ -124,12 +117,12 @@ class DocumentNavModel extends Model{
     }
 
     public function getAllDocumentNavList() {
-        $navlist = $this->field('id,text,pnid')->order('sort ASC')->select();
+        $navlist = $this->field('id,text,nnid')->order('sort ASC')->select();
         $mainNav = [];//主分类数组
         if($navlist) {
             //筛选出主分类
             foreach ($navlist as $key=>$value) {
-                if($value['pnid'] == 0) $mainNav[] = [
+                if($value['nnid'] == 0) $mainNav[] = [
                     'id'=>$value['id'],
                     'text'=>$value['text'],
                     'child'=>[]
@@ -137,9 +130,9 @@ class DocumentNavModel extends Model{
             }
             //筛选出主分类下的子分类
             foreach ($navlist as $key=>$value) {
-                if($value['pnid']) {
+                if($value['nnid']) {
                     foreach ($mainNav as $k=>$v) {
-                        if($value['pnid'] == $v['id']) {
+                        if($value['nnid'] == $v['id']) {
                             $mainNav[$k]['child'][] = [
                                 'id'=>$value['id'],
                                 'text'=>$value['text']
@@ -154,27 +147,27 @@ class DocumentNavModel extends Model{
 
     /**
      * 商品分类
-     * @param int $pnid 默认选中的主分类id
+     * @param int $nnid 默认选中的主分类id
      * @param int $nid 默认选中的子分类id
      */
-    public function getAllDocumentNavListForedit($pnid = 0, $nid = 0) {
-        $navlist = $this->field('id,text,pnid')->order('sort ASC')->select();
+    public function getAllDocumentNavListForedit($nnid = 0, $nid = 0) {
+        $navlist = $this->field('id,text,nnid')->order('sort ASC')->select();
         $mainNav = [];//主分类数组
         if($navlist) {
             //筛选出主分类
             foreach ($navlist as $key=>$value) {
-                if($value['pnid'] == 0) $mainNav[] = [
+                if($value['nnid'] == 0) $mainNav[] = [
                     'id'=>$value['id'],
                     'text'=>$value['text'],
-                    'selected'=>$pnid == $value['id'] ? 'selected' : '',
+                    'selected'=>$nnid == $value['id'] ? 'selected' : '',
                     'child'=>[]
                 ];
             }
             //筛选出主分类下的子分类
             foreach ($navlist as $key=>$value) {
-                if($value['pnid']) {
+                if($value['nnid']) {
                     foreach ($mainNav as $k=>$v) {
-                        if($value['pnid'] == $v['id']) {
+                        if($value['nnid'] == $v['id']) {
                             $mainNav[$k]['child'][] = [
                                 'id'=>$value['id'],
                                 'text'=>$value['text'],
@@ -187,7 +180,7 @@ class DocumentNavModel extends Model{
             //将子分类json化
             $selectedtwo = [];//选中的一级分类下二级分类列表
             foreach ($mainNav as $k=>$v) {
-                if($pnid == $v['id']) $selectedtwo = $v['child'];
+                if($nnid == $v['id']) $selectedtwo = $v['child'];
                 $mainNav[$k]['child'] = json_encode($v['child']);
             }
         }
@@ -200,18 +193,17 @@ class DocumentNavModel extends Model{
 	//获取一个产品分类
 	public function getOneDocumentNav($id) {
 	    return $this
-            ->join(array('a LEFT JOIN __DOCUMENT_NAV__ b ON a.pnid=b.id'))
-            ->field('a.id,a.text,a.thumb,a.info,a.pnid,a.sort,a.ishome,a.isshow,a.create,b.text as ntext')->where("a.id='{$id}'")->find();
+            ->join(array('a LEFT JOIN __DOCUMENT_NAV__ b ON a.nnid=b.id'))
+            ->field('a.id,a.text,a.content,a.nnid,a.sort,a.kind,a.isshow,a.create,b.text as ntext')->where("a.id='{$id}'")->find();
 	}
 	
 	//添加产品分类
-	public function addDocumentNav($pnid, $text, $thumb, $info, $ishome, $isshow) {
+	public function addDocumentNav($nnid, $text, $content, $kind, $isshow) {
 	    $data = array(
 	        'text'=>$text,
-            'thumb'=>$thumb,
-            'info'=>$info,
-            'pnid'=>!empty($pnid) ? $pnid : 0,
-            'ishome'=>$ishome,
+            'content'=>$content,
+            'nnid'=>!empty($nnid) ? $nnid : 0,
+            'kind'=>$kind,
             'isshow'=>$isshow,
             'create'=>NOW_TIME
 	    );
@@ -226,14 +218,13 @@ class DocumentNavModel extends Model{
 	}
 	
 	//编辑产品分类
-	public function update($id, $pnid, $text, $thumb, $sort, $info, $ishome, $isshow) {
+	public function update($id, $nnid, $text, $sort, $content, $kind, $isshow) {
 	    $data = array(
 	        'id'=>$id,
             'text'=>$text,
-            'thumb'=>$thumb,
-            'info'=>$info,
-            'pnid'=>!empty($pnid) ? $pnid : 0,
-            'ishome'=>$ishome,
+            'content'=>$content,
+            'nnid'=>!empty($nnid) ? $nnid : 0,
+            'kind'=>$kind,
             'isshow'=>$isshow,
 	        'sort'=>$sort,
             'create'=>NOW_TIME

@@ -66,42 +66,24 @@
 							<div class="panel panel-default no-border no-panel">
 								<div class="panel-body no-padding">
 									<form method="post" id="document-edit">
-										<input type="hidden" name="id" id="document-edit-id" value="{$OneProduct.id}">
-                                        <label>产品让利等级</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="genlisid">
-                                                <option value="-1">请选择产品让利等级</option>
-                                                <volist name="genlislist" id="genlislist">
-                                                <option value="{$genlislist.id}" {$genlislist.selected}>{$genlislist.genlisname}</option>
-                                                </volist>
-                                            </select>
-                                        </div>
-                                        <label>商家 <small class="tips">（商家可自行管理文档及订单发货等）</small></label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="shopid">
-                                                <option value="-1">请选择商家</option>
-                                                <volist name="shoplist" id="shoplist">
-                                                    <option value="{$shoplist.id}" <eq name="OneProduct.shopid" value="$shoplist.id">selected</eq>>{$shoplist.shopname}</option>
-                                                </volist>
-                                            </select>
-                                        </div>
+										<input type="hidden" name="id" id="document-edit-id" value="{$OneDocument.id}">
                                         <label>排序 <small class="tips">（数字大的排名在前,默认排序方式为创建时间）</small></label>
                                         <div class="form-group">
-                                            <input class="form-control" name="sort" value="{$OneProduct.sort}" placeholder="排序" />
+                                            <input class="form-control" name="sort" value="{$OneDocument.sort}" placeholder="排序" />
                                             <span class="errorLabel"></span>
                                         </div>
                                         <label><span class="red">*</span>文档名称</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="name" value="{$OneProduct.name}" placeholder="文档名称" />
+                                            <input class="form-control" name="name" value="{$OneDocument.name}" placeholder="文档名称" />
                                             <span class="errorLabel"></span>
                                         </div>
                                         <label><span class="red">*</span>文档分类</label>
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <select class="form-control select2" name="pnid">
+                                                    <select class="form-control select2" name="nnid">
                                                         <option value="-1">请选择一级分类</option>
-                                                        <volist name="productnavlist.one" id="list">
+                                                        <volist name="documentnavlist.one" id="list">
                                                             <option value="{$list.id}" {$list.selected} data-child='{$list.child}'>{$list.text}</option>
                                                         </volist>
                                                     </select>
@@ -110,7 +92,7 @@
                                                 <div class="col-md-6">
                                                     <select class="form-control select2" name="nid">
                                                         <option value="-1">请选择二级分类</option>
-                                                        <volist name="productnavlist.two" id="two">
+                                                        <volist name="documentnavlist.two" id="two">
                                                             <option value="{$two.id}" {$two.selected}>{$two.text}</option>
                                                         </volist>
                                                     </select>
@@ -118,158 +100,52 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <label>文档类型</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="type">
-                                                <option value="0" <eq name="OneProduct.type" value="0">selected</eq>>实体文档</option>
-                                                <option value="1" <eq name="OneProduct.type" value="1">selected</eq>>虚拟文档</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
                                         <label>文档属性</label>
                                         <div class="form-group">
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" <eq name="OneProduct.isrecommand" value="1">checked</eq> name="isrecommand" value="1"> 推荐</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" <eq name="OneProduct.isnew" value="1">checked</eq> name="isnew" value="1"> 新品</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" <eq name="OneProduct.ishot" value="1">checked</eq> name="ishot" value="1"> 热卖</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" <eq name="OneProduct.isdiscount" value="1">checked</eq> name="isdiscount" value="1"> 促销</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" <eq name="OneProduct.issendfree" value="1">checked</eq> name="issendfree" value="1"> 包邮</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" <eq name="OneProduct.istime" value="1">checked</eq> name="istime" value="1"> 限时卖</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" <eq name="OneProduct.isnodiscount" value="1">checked</eq> name="isnodiscount" value="1"> 不参与会员折扣</label>
+                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="istop" value="1" <eq name="OneDocument.istop" value="1">checked</eq>> 置顶</label>
+                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="isrecommand" value="1" <eq name="OneDocument.isrecommand" value="1">checked</eq>> 推荐</label>
+                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="isgun" value="1" <eq name="OneDocument.isgun" value="1">checked</eq>> 滚动</label>
+                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="ishuan" value="1" <eq name="OneDocument.ishuan" value="1">checked</eq>> 幻灯</label>
                                         </div>
                                         <label>缩略图 <small class="tips">（建议尺寸: 640 * 640 ，或正方型图片）</small></label>
                                         <div class="form-group fileupload">
                                             <a href="javascript:void(0);" id="plupload-thumb-btn" class="btn btn-default plupload-select-files"><i class="ion-image"></i> 上传缩略图</a>
-                                            <div class="imglist clearfix" data-thumb='{$OneProduct.thumb}'></div>
+                                            <div class="imglist clearfix" data-thumb='{$OneDocument.thumb}'></div>
                                             <span class="errorLabel"></span>
                                         </div>
-                                        <label>其他图片 <small class="tips">（建议尺寸: 640 * 640 ，或正方型图片）</small></label>
-                                        <div class="form-group fileupload">
-                                            <a href="javascript:void(0);" id="plupload-select-files" class="btn btn-default plupload-select-files"><i class="ion-images"></i> 批量上传图片</a>
-                                            <div class="imglist clearfix" data-images='{$OneProduct.images}'></div>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label>文档现价</label>
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <input class="form-control" name="marketprice" value="{$OneProduct.marketprice}" placeholder="文档现价" />
-                                                        <span class="input-group-addon">元</span>
-                                                    </div>
-                                                    <span class="errorLabel"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label>文档市场价</label>
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <input class="form-control" name="productprice" value="{$OneProduct.productprice}" placeholder="文档原价" />
-                                                        <span class="input-group-addon">元</span>
-                                                    </div>
-                                                    <span class="errorLabel"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label>文档成本价</label>
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <input class="form-control" name="costprice" value="{$OneProduct.costprice}" placeholder="文档成本价" />
-                                                        <span class="input-group-addon">元</span>
-                                                    </div>
-                                                    <span class="errorLabel"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <label>库存 <small class="tips">（文档的剩余数量, 如启用多规格，则此处设置无效，请移至“文档规格”中设置）</small></label>
+                                        <label><span class="red">*</span>文档关键字</label>
                                         <div class="form-group">
-                                            <div class="input-group">
-                                                <input class="form-control" name="total" value="{$OneProduct.total}" placeholder="库存" />
-                                                <span class="input-group-addon">件</span>
-                                            </div>
+                                            <input class="form-control" name="keyword" value="{$OneDocument.keyword}" placeholder="文档关键字，关键字之间用,隔开" />
                                             <span class="errorLabel"></span>
                                         </div>
-                                        <label>单次最多购买量 <small class="tips">（用户单次购买此文档数量限制）</small></label>
+                                        <label>文档关键字描述</label>
                                         <div class="form-group">
-                                            <div class="input-group">
-                                                <input class="form-control" name="maxbuy" value="{$OneProduct.maxbuy}" placeholder="单次最多购买量" />
-                                                <span class="input-group-addon">件</span>
-                                            </div>
+                                            <textarea name="description" class="textbox form-control" placeholder="文档关键字描述" style="width:100%;height:80px">{$OneDocument.description}</textarea>
                                             <span class="errorLabel"></span>
                                         </div>
-                                        <label>已出售数 <small class="tips">(物品虚拟出售数，会员下单此数据就增加, 无论是否支付)</small></label>
+                                        <label>文档简介</label>
                                         <div class="form-group">
-                                            <div class="input-group">
-                                                <input class="form-control" name="sales" value="{$OneProduct.sales}" placeholder="已出售数" />
-                                                <span class="input-group-addon">件</span>
-                                            </div>
+                                            <textarea name="info" class="textbox form-control" placeholder="文档简介" style="width:100%;height:80px">{$OneDocument.info}</textarea>
                                             <span class="errorLabel"></span>
                                         </div>
                                         <label>文档描述</label>
                                         <div class="form-group">
-                                            <textarea name="content" class="textbox textarea" style="width:100%;height:300px">{$OneProduct.content}</textarea>
+                                            <textarea name="content" class="textbox textarea" style="width:100%;height:300px">{$OneDocument.content}</textarea>
                                             <span class="errorLabel"></span>
                                         </div>
-                                        <label>是否参与分销 <small class="tips">(如果不参与分销，则不产生分销佣金)</small></label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="nocommission" style="width: 100%;">
-                                                <option value="0" <eq name="OneProduct.nocommission" value="0">selected</eq>>参与分销</option>
-                                                <option value="1" <eq name="OneProduct.nocommission" value="1">selected</eq>>不参与分销</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>显示"我要分销"按钮 <small class="tips">(如果隐藏了按钮，在参与分销的情况下，按钮只是隐藏，分享其他人购买后依然产生分销佣金)</small></label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="hidecommission" style="width: 100%;">
-                                                <option value="0" <eq name="OneProduct.hidecommission" value="0">selected</eq>>显示</option>
-                                                <option value="1" <eq name="OneProduct.hidecommission" value="1">selected</eq>>隐藏</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>是否订单全返</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="isreturn" style="width: 100%;">
-                                                <option value="0" <eq name="OneProduct.isreturn" value="0">selected</eq>>否</option>
-                                                <option value="1" <eq name="OneProduct.isreturn" value="1">selected</eq>>是</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>是否订单双返</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="isreturntwo" style="width: 100%;">
-                                                <option value="0" <eq name="OneProduct.isreturntwo" value="0">selected</eq>>否</option>
-                                                <option value="1" <eq name="OneProduct.isreturntwo" value="1">selected</eq>>是</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>是否排列全返</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="isreturnqueue" style="width: 100%;">
-                                                <option value="0" <eq name="OneProduct.isreturnqueue" value="0">selected</eq>>否</option>
-                                                <option value="1" <eq name="OneProduct.isreturnqueue" value="1">selected</eq>>是</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>全返分红金额 <small class="tips">(文档全返分红金额)</small></label>
+                                        <label>阅读数</label>
                                         <div class="form-group">
                                             <div class="input-group">
-                                                <input class="form-control" name="return_appoint_amount" value="{$OneProduct.return_appoint_amount}" placeholder="全返分红金额" />
-                                                <span class="input-group-addon">元</span>
-                                            </div>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>运费设置</label>
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <input class="form-control" name="dispatchprice" value="{$OneProduct.dispatchprice}" placeholder="运费设置" />
-                                                <span class="input-group-addon">元</span>
+                                                <input class="form-control" name="readcount" value="{$OneDocument.readcount}" placeholder="阅读数" />
+                                                <span class="input-group-addon">次</span>
                                             </div>
                                             <span class="errorLabel"></span>
                                         </div>
                                         <label>文档状态</label>
                                         <div class="form-group">
                                             <select class="form-control" name="status" data-placeholder="选择文档状态" style="width: 100%;">
-                                                <option value="0" <eq name="OneProduct.status" value="0">selected</eq>>下架</option>
-                                                <option value="1" <eq name="OneProduct.status" value="1">selected</eq>>上架</option>
+                                                <option value="0" <eq name="OneDocument.status" value="0">selected</eq>>待发布</option>
+                                                <option value="1" <eq name="OneDocument.status" value="1">selected</eq>>已发布</option>
                                             </select>
                                             <span class="errorLabel"></span>
                                         </div>

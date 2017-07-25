@@ -21,15 +21,15 @@ class DocumentModel extends Model{
      * @param string $start 查找开始的地方
      * @param string $length 要查找数据的条数
      */
-    public function ajaxlistDocument($draw, $search_value, $start, $length, $status, $shuxing, $pnid, $nid, $marketprice) {
+    public function ajaxlistDocument($draw, $search_value, $start, $length, $status, $shuxing, $nnid, $nid, $order) {
 
         if(isNumeric($status) && $status != -1) $map['a.status'] = $status;
         if(!empty($shuxing)) $map['a.'.$shuxing] = 1;
-        if(!empty($pnid) && $pnid != -1) $map['a.pnid'] = $pnid;
+        if(!empty($nnid) && $nnid != -1) $map['a.nnid'] = $nnid;
         if(!empty($nid) && $nid != -1) $map['a.nid'] = $nid;
 
-        if(!empty($marketprice) && $marketprice != '默认排序') {
-            $ordermap['a.marketprice'] = $marketprice;
+        if(!empty($order) && $order != '默认排序') {
+            $ordermap['a.'+$order] = 'DESC';
         }else {
             $ordermap['a.create'] = 'DESC';
             $ordermap['a.sort'] = 'DESC';
@@ -44,8 +44,8 @@ class DocumentModel extends Model{
             $obj = $this
                 ->join(array(
                     'a LEFT JOIN __DOCUMENT_NAV__ b ON a.nid=b.id',
-                    'LEFT JOIN __DOCUMENT_NAV__ c ON b.pnid=c.id'))
-                ->field('a.id,a.name,a.thumb,a.nid,a.status,a.create,a.isrecommand,a.isnew,a.ishot,a.isdiscount,a.issendfree,a.istime,a.isnodiscount,b.text,c.text as ntext')
+                    'LEFT JOIN __DOCUMENT_NAV__ c ON b.nnid=c.id'))
+                ->field('a.id,a.name,a.thumb,a.nid,a.status,a.create,a.isrecommand,a.isgun,a.ishuan,a.istop,a.readcount,b.text,c.text as ntext')
                 ->where($map)
                 ->limit(intval($start), intval($length))
                 ->order($ordermap)->select();
@@ -53,14 +53,14 @@ class DocumentModel extends Model{
             $recordsFiltered = $this
                 ->join(array(
                     'a LEFT JOIN __DOCUMENT_NAV__ b ON a.nid=b.id',
-                    'LEFT JOIN __DOCUMENT_NAV__ c ON b.pnid=c.id'))
+                    'LEFT JOIN __DOCUMENT_NAV__ c ON b.nnid=c.id'))
                 ->where($map)->count();
         }else{
             $obj = $this
                 ->join(array(
                     'a LEFT JOIN __DOCUMENT_NAV__ b ON a.nid=b.id',
-                    'LEFT JOIN __DOCUMENT_NAV__ c ON b.pnid=c.id'))
-                ->field('a.id,a.name,a.thumb,a.nid,a.status,a.create,a.isrecommand,a.isnew,a.ishot,a.isdiscount,a.issendfree,a.istime,a.isnodiscount,b.text,c.text as ntext')
+                    'LEFT JOIN __DOCUMENT_NAV__ c ON b.nnid=c.id'))
+                ->field('a.id,a.name,a.thumb,a.nid,a.status,a.create,a.isrecommand,a.isgun,a.ishuan,a.istop,a.readcount,b.text,c.text as ntext')
                 ->where($map)
                 ->limit(intval($start), intval($length))
                 ->order($ordermap)->select();
@@ -68,7 +68,7 @@ class DocumentModel extends Model{
             $recordsFiltered = $this
                 ->join(array(
                     'a LEFT JOIN __DOCUMENT_NAV__ b ON a.nid=b.id',
-                    'LEFT JOIN __DOCUMENT_NAV__ c ON b.pnid=c.id'))
+                    'LEFT JOIN __DOCUMENT_NAV__ c ON b.nnid=c.id'))
                 ->where($map)->count();
         }
 
@@ -85,23 +85,13 @@ class DocumentModel extends Model{
                     }
                 }
             }
-            //是否参与双返
-            $isreturntwo = $value['isreturntwo'] ? ' <span class="text-info green">[参与双返]</span>' : '';
             //商品分类
-            $value['ntext_html'] = $value['ntext'] ? '<span class="text-danger">['.$value['ntext'].']</span> <span class="text-info">['.$value['text'].']</span> <span class="text-info red">['.$value['genlisname'].']</span> '.$isreturntwo : '<span class="text-info">['.$value['text'].']</span> <span class="text-info red">['.$value['genlisname'].']</span> '.$isreturntwo;
+            $value['ntext_html'] = $value['ntext'] ? '<span class="text-danger">['.$value['ntext'].']</span> <span class="text-info">['.$value['text'].']</span> ' : '<span class="text-info">['.$value['text'].']</span> ';
             //商品属性
-            $obj[$key]['shuxing_html'] = '<label class="label label-default cursor property '.($value['isnew'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="isnew" data-value="'.$value['isnew'].'">新品</label> - <label class="label label-default cursor property '.($value['ishot'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="ishot" data-value="'.$value['ishot'].'">热卖</label> - <label class="label label-default cursor property '.($value['isrecommand'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="isrecommand" data-value="'.$value['isrecommand'].'">推荐</label> - <label class="label label-default cursor property '.($value['isdiscount'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="isdiscount" data-value="'.$value['isdiscount'].'">促销</label> - <label class="label label-default cursor property '.($value['issendfree'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="issendfree" data-value="'.$value['issendfree'].'">包邮</label> - <label class="label label-default cursor property '.($value['istime'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="istime" data-value="'.$value['istime'].'">限时卖</label> - <label class="label label-default cursor property '.($value['isnodiscount'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="isnodiscount" data-value="'.$value['isnodiscount'].'">不参与折扣</label>';
-            //是否参与订单全返
-            $value['isreturn'] = $value['isreturn'] ? '<label class="label label-default">参与订单全返</label>' : '';
-            //是否参与排列全返
-            $value['isreturnqueue'] = $value['isreturnqueue'] ? '<label class="label label-default">参与排列全返</label>' : '';
+            $obj[$key]['shuxing_html'] = '<label class="label label-default cursor property '.($value['istop'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="istop" data-value="'.$value['istop'].'">置顶</label> - <label class="label label-default cursor property '.($value['isrecommand'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="isrecommand" data-value="'.$value['isrecommand'].'">推荐</label> - <label class="label label-default cursor property '.($value['isgun'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="isgun" data-value="'.$value['isgun'].'">滚动</label> - <label class="label label-default cursor property '.($value['ishuan'] ? 'label-info' : '').'" data-id="'.$value['id'].'" data-property="ishuan" data-value="'.$value['ishuan'].'">幻灯</label>';
             $obj[$key]['create'] = date('Y/m/d H:i',$value['create']);
             //商品状态
-            $obj[$key]['status'] = $value['status'] ? '<label class="label label-info cursor product-status" data-status="'.$value['status'].'" data-id="'.$value['id'].'">上架</label>' : '<label class="label label-default cursor product-status" data-status="'.$value['status'].'" data-id="'.$value['id'].'">下架</label>';
-            //是否是商家发布的商品
-            if($value['shopname'] != '深圳市杏檀生物科技开发有限公司') {
-                $value['check'] = $value['status'] ? '<br><span class="bg-green" style="margin-top:5px;display: inline-block">审核通过</span>' : '<br><span class="bg-red" style="margin-top:5px;display: inline-block">待审核</span>';
-            }
+            $obj[$key]['status'] = $value['status'] ? '<label class="label label-info cursor product-status" data-status="'.$value['status'].'" data-id="'.$value['id'].'">已发布</label>' : '<label class="label label-default cursor product-status" data-status="'.$value['status'].'" data-id="'.$value['id'].'">待发布</label>';
             //权限处理
             $btn_html = '';
             if(in_array('Document/edit', session('pageNavDos'))) {
@@ -114,10 +104,9 @@ class DocumentModel extends Model{
             $row = array(
                 $key+1,
                 '<img src="'.$obj[$key]['thumb'].'" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;">',
-                '<div style="text-align: left;"><span style="color: #000;text-decoration: underline">商家:'.$value['shopname'].'</span><br>'.$value['ntext_html'].'<br><span class="title">'.$value['name'].'</span><br><div style="padding-top:10px;">'.$obj[$key]['shuxing_html'].'</div><div style="padding-top:10px;">'.$value['isreturn'].' '.$value['isreturnqueue'].'</div></div>',
-                $obj[$key]['marketprice'].'<br>'.$value['total'],
-                $obj[$key]['sales'],
-                $obj[$key]['status'].$value['check'],
+                '<div style="text-align: left;"><span style="color: #000;">'.$value['ntext_html'].'<br><span class="title" style="text-decoration: underline">'.$value['name'].'</span><br><div style="padding-top:10px;">'.$obj[$key]['shuxing_html'].'</div></div>',
+                $obj[$key]['readcount'],
+                $obj[$key]['status'],
                 $obj[$key]['create'],
                 $btn_html
             );
@@ -141,7 +130,7 @@ class DocumentModel extends Model{
     public function getOneDocument($id) {
         $map['id'] = $id;
         $oneProduct = $this
-            ->field('id,shopid,genlisid,sort,name,pnid,nid,type,isrecommand,isnew,ishot,isdiscount,issendfree,istime,isnodiscount,thumb,images,marketprice,productprice,costprice,total,maxbuy,sales,content,nocommission,hidecommission,status,isreturn,isreturntwo,isreturnqueue,return_appoint_amount,dispatchprice')
+            ->field('id,name,thumb,keyword,description,info,content,isrecommand,isgun,ishuan,istop,sort,readcount,nnid,nid,status,create')
             ->where($map)
             ->find();
         if($oneProduct) {
@@ -151,71 +140,40 @@ class DocumentModel extends Model{
     }
 
     /**
-     * 添加商品
-     * @param $shopid 商家id
-     * @param $sort 排序
-     * @param $name 商品名称
-     * @param $pnid 一级分类
-     * @param $nid 二级分类
-     * @param $type 商品类型
-     * @param $isrecommand 是否推荐
-     * @param $isnew 是否新品
-     * @param $ishot 是否热卖
-     * @param $isdiscount 是否促销
-     * @param $issendfree 是否包邮
-     * @param $istime 是否限时卖
-     * @param $isnodiscount 是否不参与会员折扣
-     * @param $thumb 缩略图
-     * @param $images 其他图片集合
-     * @param $marketprice 现价
-     * @param $productprice 原价
-     * @param $costprice 成本价
-     * @param $total 库存
-     * @param $maxbuy 单次最多购买量
-     * @param $sales 已出售数
-     * @param $content 商品描述
-     * @param $nocommission 是否参与分销
-     * @param $hidecommission 显示"我要分销"按钮
-     * @param $isreturn 是否订单全返
-     * @param $isreturntwo 是否订单双返
-     * @param $isreturnqueue 是否排列全返
-     * @param $return_appoint_amount 全返分红金额
-     * @param $dispatchprice 运费设置
-     * @param $status 商品状态
+     * 添加文档
+     * @param $sort
+     * @param $name
+     * @param $nnid
+     * @param $nid
+     * @param $istop
+     * @param $isrecommand
+     * @param $isgun
+     * @param $ishuan
+     * @param $thumb
+     * @param $keyword
+     * @param $description
+     * @param $info
+     * @param $content
+     * @param $readcount
+     * @param $status
      * @return int|mixed|string
      */
-    public function addDocument($shopid, $genlisid, $sort, $name, $pnid, $nid, $type, $isrecommand, $isnew, $ishot, $isdiscount, $issendfree, $istime, $isnodiscount, $thumb, $images = array(), $marketprice, $productprice, $costprice, $total, $maxbuy, $sales, $content, $nocommission, $hidecommission, $isreturn, $isreturntwo, $isreturnqueue, $return_appoint_amount, $dispatchprice, $status) {
+    public function addDocument($sort, $name, $nnid, $nid, $istop, $isrecommand, $isgun, $ishuan, $thumb, $keyword, $description, $info, $content, $readcount, $status) {
         $data = array(
-            'shopid'=>$shopid,
-            'genlisid'=>$genlisid,
             'sort'=>$sort,
             'name'=>$name,
-            'pnid'=>$pnid,
+            'nnid'=>$nnid,
             'nid'=>$nid,
-            'type'=>$type,
+            'istop'=>$istop,
             'isrecommand'=>$isrecommand,
-            'isnew'=>$isnew,
-            'ishot'=>$ishot,
-            'isdiscount'=>$isdiscount,
-            'issendfree'=>$issendfree,
-            'istime'=>$istime,
-            'isnodiscount'=>$isnodiscount,
+            'isgun'=>$isgun,
+            'ishuan'=>$ishuan,
             'thumb'=>$thumb,
-            'images'=>$images ? arrayJsonToArray($images) : '',
-            'marketprice'=>$marketprice,
-            'productprice'=>$productprice,
-            'costprice'=>$costprice,
-            'total'=>$total,
-            'maxbuy'=>$maxbuy,
-            'sales'=>$sales,
+            'keyword'=>$keyword,
+            'description'=>$description,
+            'info'=>$info,
             'content'=>$content,
-            'nocommission'=>$nocommission,
-            'hidecommission'=>$hidecommission,
-            'isreturn'=>$isreturn,
-            'isreturntwo'=>$isreturntwo,
-            'isreturnqueue'=>$isreturnqueue,
-            'return_appoint_amount'=>$return_appoint_amount,
-            'dispatchprice'=>$dispatchprice,
+            'readcount'=>$readcount,
             'status'=>$status
         );
         if($this->create($data)){
@@ -227,73 +185,42 @@ class DocumentModel extends Model{
     }
 
     /**
-     * 编辑商品
-     * @param $id 商品id
-     * @param $shopid 商家id
-     * @param $sort 排序
-     * @param $name 商品名称
-     * @param $pnid 一级分类
-     * @param $nid 二级分类
-     * @param $type 商品类型
-     * @param $isrecommand 是否推荐
-     * @param $isnew 是否新品
-     * @param $ishot 是否热卖
-     * @param $isdiscount 是否促销
-     * @param $issendfree 是否包邮
-     * @param $istime 是否限时卖
-     * @param $isnodiscount 是否不参与会员折扣
-     * @param $thumb 缩略图
-     * @param $images 其他图片集合
-     * @param $marketprice 现价
-     * @param $productprice 原价
-     * @param $costprice 成本价
-     * @param $total 库存
-     * @param $maxbuy 单次最多购买量
-     * @param $sales 已出售数
-     * @param $content 商品描述
-     * @param $nocommission 是否参与分销
-     * @param $hidecommission 显示"我要分销"按钮
-     * @param $isreturn 是否订单全返
-     * @param $isreturntwo 是否订单双返
-     * @param $isreturnqueue 是否排列全返
-     * @param $return_appoint_amount 全返分红金额
-     * @param $dispatchprice 运费设置
-     * @param $status 商品状态
-     * @return int|mixed|string
+     * 编辑文档
+     * @param $id
+     * @param $sort
+     * @param $name
+     * @param $nnid
+     * @param $nid
+     * @param $istop
+     * @param $isrecommand
+     * @param $isgun
+     * @param $ishuan
+     * @param $thumb
+     * @param $keyword
+     * @param $description
+     * @param $info
+     * @param $content
+     * @param $readcount
+     * @param $status
+     * @return int|string
      */
-    public function update($id, $shopid, $genlisid, $sort, $name, $pnid, $nid, $type, $isrecommand, $isnew, $ishot, $isdiscount, $issendfree, $istime, $isnodiscount, $thumb, $images = array(), $marketprice, $productprice, $costprice, $total, $maxbuy, $sales, $content, $nocommission, $hidecommission, $isreturn, $isreturntwo, $isreturnqueue, $return_appoint_amount, $dispatchprice, $status) {
+    public function update($id, $sort, $name, $nnid, $nid, $istop, $isrecommand, $isgun, $ishuan, $thumb, $keyword, $description, $info, $content, $readcount, $status) {
         $data = array(
             'id'=>$id,
-            'shopid'=>$shopid,
-            'genlisid'=>$genlisid,
             'sort'=>$sort,
             'name'=>$name,
-            'pnid'=>$pnid,
+            'nnid'=>$nnid,
             'nid'=>$nid,
-            'type'=>$type,
+            'istop'=>$istop,
             'isrecommand'=>$isrecommand,
-            'isnew'=>$isnew,
-            'ishot'=>$ishot,
-            'isdiscount'=>$isdiscount,
-            'issendfree'=>$issendfree,
-            'istime'=>$istime,
-            'isnodiscount'=>$isnodiscount,
+            'isgun'=>$isgun,
+            'ishuan'=>$ishuan,
             'thumb'=>$thumb,
-            'images'=>$images ? arrayJsonToArray($images) : '',
-            'marketprice'=>$marketprice,
-            'productprice'=>$productprice,
-            'costprice'=>$costprice,
-            'total'=>$total,
-            'maxbuy'=>$maxbuy,
-            'sales'=>$sales,
+            'keyword'=>$keyword,
+            'description'=>$description,
+            'info'=>$info,
             'content'=>$content,
-            'nocommission'=>$nocommission,
-            'hidecommission'=>$hidecommission,
-            'isreturn'=>$isreturn,
-            'isreturntwo'=>$isreturntwo,
-            'isreturnqueue'=>$isreturnqueue,
-            'return_appoint_amount'=>$return_appoint_amount,
-            'dispatchprice'=>$dispatchprice,
+            'readcount'=>$readcount,
             'status'=>$status,
             'updatetime'=>NOW_TIME
         );

@@ -72,8 +72,7 @@
 											<th width="10px"></th>
 											<th>文档</th>
                                             <th></th>
-											<th>价格<br>库存</th>
-											<th>销量</th>
+											<th>阅读数</th>
 											<th width="65px">状态</th>
                                             <th>时间</th>
 											<th width="75px">操作</th>

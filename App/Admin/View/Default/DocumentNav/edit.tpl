@@ -20,6 +20,8 @@
     <!-- Theme style -->
     <link href="__BASE__/AdminLTE/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
     <link href="__BASE__/AdminLTE/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
+    <!-- uploadify -->
+    <link rel="stylesheet" type="text/css" href="__KINDEDITOR__/themes/default/default.css" />
     <!-- jquery-confirm.min.css -->
     <link href="__CSS__/jquery-confirm.min.css" rel="stylesheet" type="text/css" />
     <!-- 自定义CSS -->
@@ -66,12 +68,12 @@
                             <div class="panel panel-default no-border no-panel">
                                 <div class="panel-body no-padding">
                                     <form method="post" id="documentnav-edit">
-                                        <input type="hidden" name="id" id="documentnav-edit-id" value="{$OneProductNav.id}">
+                                        <input type="hidden" name="id" id="documentnav-edit-id" value="{$OneDocumentNav.id}">
                                         <label>上级分类</label>
                                         <div class="form-group">
-                                            <select class="form-control select4" name="pnid" data-placeholder="请选择上级分类" style="width:100%;">
-                                                <notempty name="OneProductNav.pnid">
-                                                    <option value="{$OneProductNav.pnid}" selected>{$OneProductNav.ntext}</option>
+                                            <select class="form-control select4" name="nnid" data-placeholder="请选择上级分类" style="width:100%;">
+                                                <notempty name="OneDocumentNav.nnid">
+                                                    <option value="{$OneDocumentNav.nnid}" selected>{$OneDocumentNav.ntext}</option>
                                                     <else />
                                                     <option value="-1">主分类</option>
                                                 </notempty>
@@ -80,40 +82,36 @@
                                         </div>
                                         <label>分类名称</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="text" value="{$OneProductNav.text}" placeholder="分类名称" />
+                                            <input class="form-control" name="text" value="{$OneDocumentNav.text}" placeholder="分类名称" />
                                             <span class="errorLabel"></span>
                                         </div>
                                         <label class="info">分类排序</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="sort" value="{$OneProductNav.sort}" placeholder="分类排序" />
+                                            <input class="form-control" name="sort" value="{$OneDocumentNav.sort}" placeholder="分类排序" />
                                             <span class="errorLabel"></span>
                                         </div>
-                                        <label>分类图片 <small class="tips">（图片尺寸要求：100px * 100px，大小要求：不超过200KB）</small></label>
-                                        <div class="form-group fileupload">
-                                            <a href="javascript:void(0);" id="plupload-thumb-btn" class="btn btn-default plupload-select-files"><i class="ion-image"></i> 上传缩略图</a>
-                                            <div class="imglist clearfix" data-thumb='{$OneProductNav.thumb}'></div>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>分类描述</label>
+                                        <label class="info">分类类型 <small class="tips">(* 单篇代表此分类下不存在子导航和其他的文档列表。若存在，则为多篇)</small></label>
                                         <div class="form-group">
-                                            <textarea name="info" rows="3" class="form-control" placeholder="分类描述">{$OneProductNav.info}</textarea>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label class="info">是否推荐</label>
-                                        <div class="form-group">
-                                            <select class="select3 form-control" name="ishome" style="width:100%;">
-                                                <option value="1" <eq name="OneProductNav.ishome" value="1">selected</eq>>是</option>
-                                                <option value="0" <eq name="OneProductNav.ishome" value="0">selected</eq>>否</option>
+                                            <select class="select3 form-control" name="kind" style="width:100%;">
+                                                <option value="1" <eq name="OneDocumentNav.kind" value="1">selected</eq>>多篇</option>
+                                                <option value="0" <eq name="OneDocumentNav.kind" value="0">selected</eq>>单篇</option>
                                             </select>
                                             <span class="errorLabel"></span>
                                         </div>
                                         <label class="info">是否显示</label>
                                         <div class="form-group">
                                             <select class="select3 form-control" name="isshow" style="width:100%;">
-                                                <option value="1" <eq name="OneProductNav.isshow" value="1">selected</eq>>是</option>
-                                                <option value="0" <eq name="OneProductNav.isshow" value="0">selected</eq>>否</option>
+                                                <option value="1" <eq name="OneDocumentNav.isshow" value="1">selected</eq>>是</option>
+                                                <option value="0" <eq name="OneDocumentNav.isshow" value="0">selected</eq>>否</option>
                                             </select>
                                             <span class="errorLabel"></span>
+                                        </div>
+                                        <div id="documentnav-content" style="display: none;">
+                                            <label>分类描述</label>
+                                            <div class="form-group">
+                                                <textarea name="content" class="textbox textarea" placeholder="分类描述" style="width:100%;height:300px">{$OneDocumentNav.info}</textarea>
+                                                <span class="errorLabel"></span>
+                                            </div>
                                         </div>
                                         <div class="box-footer">
                                             <div class="pull-right">
@@ -146,7 +144,8 @@
 <script src="__BASE__/select2-4.0.3/js/i18n/zh-CN.js" type="text/javascript"></script>
 <!-- uploadify -->
 <script type="text/javascript" src="__BASE__/plupload-2.3.1/js/plupload.full.min.js"></script>
-<AdminLTE.2.1.2nLTE App -->
+<script type="text/javascript" src="__KINDEDITOR__/kindeditor.js"></script>
+<script type="text/javascript" src="__KINDEDITOR__/lang/zh_CN.js"></script>
 <script src="__BASE__/AdminLTE/dist/js/app.min.js" type="text/javascript"></script>
 <script src="__JS__/base/jquery.validate.min.js" type="text/javascript"></script>
 <script src="__JS__/base/jquery.form.js" type="text/javascript"></script>

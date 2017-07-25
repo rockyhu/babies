@@ -67,24 +67,6 @@
 								<div class="panel-body no-padding">
                                     <p class="tips red">备注:带*的为必填项</p>
 									<form method="post" id="document-add" name="product_add">
-                                        <label>产品让利等级</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="genlisid">
-                                                <option value="-1">请选择产品让利等级</option>
-                                                <volist name="genlislist" id="plist">
-                                                <option value="{$plist.id}">{$plist.genlisname}</option>
-                                                </volist>
-                                            </select>
-                                        </div>
-                                        <label>所属商家 <small class="tips">（商家可自行管理文档及订单发货等）</small></label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="shopid">
-                                                <option value="-1">请选择商家</option>
-                                                <volist name="shoplist" id="shoplist">
-                                                    <option value="{$shoplist.id}">{$shoplist.shopname}</option>
-                                                </volist>
-                                            </select>
-                                        </div>
                                         <label>排序 <small class="tips">（数字大的排名在前,默认排序方式为创建时间）</small></label>
                                         <div class="form-group">
                                             <input class="form-control" name="sort" placeholder="排序" />
@@ -99,9 +81,9 @@
 										<div class="form-group">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <select class="form-control select2" name="pnid">
+                                                    <select class="form-control select2" name="nnid">
                                                         <option value="-1">请选择一级分类</option>
-                                                        <volist name="productnavlist.one" id="list">
+                                                        <volist name="documentnavlist.one" id="list">
                                                         <option value="{$list.id}" {$list.selected} data-child='{$list.child}'>{$list.text}</option>
                                                         </volist>
                                                     </select>
@@ -110,7 +92,7 @@
                                                 <div class="col-md-6">
                                                     <select class="form-control select2" name="nid">
                                                         <option value="-1">请选择二级分类</option>
-                                                        <volist name="productnavlist.two" id="two">
+                                                        <volist name="documentnavlist.two" id="two">
                                                             <option value="{$two.id}" {$two.selected}>{$two.text}</option>
                                                         </volist>
                                                     </select>
@@ -118,23 +100,12 @@
                                                 </div>
                                             </div>
 										</div>
-										<label>文档类型</label>
-										<div class="form-group">
-                                            <select class="form-control" name="type">
-                                                <option value="0">实体文档</option>
-                                                <option value="1">虚拟文档</option>
-                                            </select>
-											<span class="errorLabel"></span>
-										</div>
                                         <label>文档属性</label>
                                         <div class="form-group">
+                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="istop" value="1"> 置顶</label>
                                             <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="isrecommand" value="1"> 推荐</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="isnew" value="1"> 新品</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="ishot" value="1"> 热卖</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="isdiscount" value="1"> 促销</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="issendfree" value="1"> 包邮</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="istime" value="1"> 限时卖</label>
-                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="isnodiscount" value="1"> 不参与会员折扣</label>
+                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="isgun" value="1"> 滚动</label>
+                                            <label style="color: #666;font-weight: 400;padding-right:10px;"><input type="checkbox" name="ishuan" value="1"> 幻灯</label>
                                         </div>
                                         <label>缩略图 <small class="tips">（建议尺寸: 640 * 640 ，或正方型图片）</small></label>
                                         <div class="form-group fileupload">
@@ -142,134 +113,39 @@
                                             <div class="imglist clearfix"></div>
                                             <span class="errorLabel"></span>
                                         </div>
-                                        <label>其他图片 <small class="tips">（建议尺寸: 640 * 640 ，或正方型图片）</small></label>
-                                        <div class="form-group fileupload">
-                                            <a href="javascript:void(0);" id="plupload-select-files" class="btn btn-default plupload-select-files"><i class="ion-images"></i> 批量上传图片</a>
-                                            <div class="imglist clearfix"></div>
+                                        <label><span class="red">*</span>文档关键字</label>
+                                        <div class="form-group">
+                                            <input class="form-control" name="keyword" placeholder="文档关键字，关键字之间用,隔开" />
                                             <span class="errorLabel"></span>
                                         </div>
-										<div class="row">
-											<div class="col-md-4">
-												<label>文档现价</label>
-												<div class="form-group">
-                                                    <div class="input-group">
-													    <input class="form-control" name="marketprice" placeholder="文档现价" />
-                                                        <span class="input-group-addon">元</span>
-                                                    </div>
-													<span class="errorLabel"></span>
-												</div>
-											</div>
-											<div class="col-md-4">
-												<label>文档市场价</label>
-												<div class="form-group">
-                                                    <div class="input-group">
-													    <input class="form-control" name="productprice" placeholder="文档原价" />
-                                                        <span class="input-group-addon">元</span>
-                                                    </div>
-													<span class="errorLabel"></span>
-												</div>
-											</div>
-                                            <div class="col-md-4">
-                                                <label>文档成本价</label>
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <input class="form-control" name="costprice" placeholder="文档成本价" />
-                                                        <span class="input-group-addon">元</span>
-                                                    </div>
-                                                    <span class="errorLabel"></span>
-                                                </div>
-                                            </div>
-										</div>
-										<label>库存 <small class="tips">（文档的剩余数量, 如启用多规格，则此处设置无效，请移至“文档规格”中设置）</small></label>
-										<div class="form-group">
-                                            <div class="input-group">
-                                                <input class="form-control" name="total" placeholder="库存" />
-                                                <span class="input-group-addon">件</span>
-                                            </div>
+                                        <label>文档关键字描述</label>
+                                        <div class="form-group">
+                                            <textarea name="description" class="textbox form-control" placeholder="文档关键字描述" style="width:100%;height:80px"></textarea>
                                             <span class="errorLabel"></span>
-										</div>
-										<label>单次最多购买量 <small class="tips">（用户单次购买此文档数量限制）</small></label>
-										<div class="form-group">
-                                            <div class="input-group">
-											    <input class="form-control" name="maxbuy" placeholder="单次最多购买量" />
-                                                <span class="input-group-addon">件</span>
-                                            </div>
-											<span class="errorLabel"></span>
-										</div>
-										<label>已出售数 <small class="tips">(物品虚拟出售数，会员下单此数据就增加, 无论是否支付)</small></label>
-										<div class="form-group">
-                                            <div class="input-group">
-											    <input class="form-control" name="sales" placeholder="已出售数" />
-                                                <span class="input-group-addon">件</span>
-                                            </div>
-											<span class="errorLabel"></span>
-										</div>
-										<label>文档描述</label>
+                                        </div>
+                                        <label>文档简介</label>
+                                        <div class="form-group">
+                                            <textarea name="info" class="textbox form-control" placeholder="文档简介" style="width:100%;height:80px"></textarea>
+                                            <span class="errorLabel"></span>
+                                        </div>
+										<label>文档内容</label>
 										<div class="form-group">
 											<textarea name="content" class="textbox textarea" style="width:100%;height:300px"></textarea>
 											<span class="errorLabel"></span>
 										</div>
-                                        <label>是否参与分销 <small class="tips">(如果不参与分销，则不产生分销佣金)</small></label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="nocommission" style="width: 100%;">
-                                                <option value="0">参与分销</option>
-                                                <option value="1">不参与分销</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>显示"我要分销"按钮 <small class="tips">(如果隐藏了按钮，在参与分销的情况下，按钮只是隐藏，分享其他人购买后依然产生分销佣金)</small></label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="hidecommission" style="width: 100%;">
-                                                <option value="0">显示</option>
-                                                <option value="1">隐藏</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>是否订单全返</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="isreturn" style="width: 100%;">
-                                                <option value="0">否</option>
-                                                <option value="1">是</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>是否订单双返</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="isreturntwo" style="width: 100%;">
-                                                <option value="0">否</option>
-                                                <option value="1">是</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>是否排列全返</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="isreturnqueue" style="width: 100%;">
-                                                <option value="0">否</option>
-                                                <option value="1">是</option>
-                                            </select>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>全返分红金额 <small class="tips">(文档全返分红金额)</small></label>
+                                        <label>阅读数</label>
                                         <div class="form-group">
                                             <div class="input-group">
-                                                <input class="form-control" name="return_appoint_amount" value="0.00" placeholder="全返分红金额" />
-                                                <span class="input-group-addon">元</span>
-                                            </div>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>运费设置</label>
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <input class="form-control" name="dispatchprice" value="0.00" placeholder="运费设置" />
-                                                <span class="input-group-addon">元</span>
+                                                <input class="form-control" name="readcount" placeholder="阅读数" />
+                                                <span class="input-group-addon">次</span>
                                             </div>
                                             <span class="errorLabel"></span>
                                         </div>
 										<label>文档状态</label>
 										<div class="form-group">
 											<select class="form-control" name="status" data-placeholder="选择文档状态" style="width: 100%;">
-												<option value="0">下架</option>
-												<option value="1">上架</option>
+												<option value="0">待发布</option>
+												<option value="1">已发布</option>
 											</select>
 											<span class="errorLabel"></span>
 										</div>

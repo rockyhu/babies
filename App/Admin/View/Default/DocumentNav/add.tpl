@@ -13,6 +13,8 @@
     <link href="__BASE__/AdminLTE/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <!-- Font Awesome Icons -->
     <link href="__BASE__/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <!-- uploadify -->
+    <link rel="stylesheet" type="text/css" href="__KINDEDITOR__/themes/default/default.css" />
     <!-- Ionicons -->
     <link href="__BASE__/ionicons-2.0.1/css/ionicons.min.css" rel="stylesheet">
     <!-- Select2 -->
@@ -68,10 +70,10 @@
                                     <p class="tips red">备注:带*的为必填项</p>
                                     <form method="post" id="documentnav-add">
                                         <notempty name="Think.get.id">
-                                            <input type="hidden" name="pnid" value="{$Think.get.id}">
+                                            <input type="hidden" name="nnid" value="{$Think.get.id}">
                                             <label>上级分类</label>
                                             <div class="form-group">
-                                                <input class="form-control" name="text" disabled value="{$OneProductNav.text}" placeholder="上级分类" />
+                                                <input class="form-control" name="text" disabled value="{$OneDocumentNav.text}" placeholder="上级分类" />
                                             </div>
                                         </notempty>
                                         <label><span class="red">*</span>分类名称</label>
@@ -79,22 +81,11 @@
                                             <input class="form-control" name="text" placeholder="分类名称" />
                                             <span class="errorLabel"></span>
                                         </div>
-                                        <label>分类图片 <small class="tips">（图片尺寸要求：100px * 100px，大小要求：不超过200KB）</small></label>
-                                        <div class="form-group fileupload">
-                                            <a href="javascript:void(0);" id="plupload-thumb-btn" class="btn btn-default plupload-select-files"><i class="ion-image"></i> 上传缩略图</a>
-                                            <div class="imglist clearfix"></div>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label>分类描述</label>
+                                        <label class="info">分类类型 <small class="tips">(* 单篇代表此分类下不存在子导航和其他的文档列表。若存在，则为多篇)</small></label>
                                         <div class="form-group">
-                                            <textarea name="info" rows="3" class="form-control" placeholder="分类描述"></textarea>
-                                            <span class="errorLabel"></span>
-                                        </div>
-                                        <label class="info">是否推荐</label>
-                                        <div class="form-group">
-                                            <select class="select3 form-control" name="ishome" style="width:100%;">
-                                                <option value="1">是</option>
-                                                <option value="0" selected>否</option>
+                                            <select class="select3 form-control" name="kind" style="width:100%;">
+                                                <option value="1" selected>多篇</option>
+                                                <option value="0">单篇</option>
                                             </select>
                                             <span class="errorLabel"></span>
                                         </div>
@@ -105,6 +96,13 @@
                                                 <option value="0">否</option>
                                             </select>
                                             <span class="errorLabel"></span>
+                                        </div>
+                                        <div id="documentnav-content" style="display: none;">
+                                            <label>分类描述</label>
+                                            <div class="form-group">
+                                                <textarea name="content" class="textbox textarea" placeholder="分类描述" style="width:100%;height:300px"></textarea>
+                                                <span class="errorLabel"></span>
+                                            </div>
                                         </div>
                                         <div class="box-footer">
                                             <div class="pull-right">
@@ -137,8 +135,9 @@
 <script src="__BASE__/select2-4.0.3/js/i18n/zh-CN.js" type="text/javascript"></script>
 <!-- uploadify -->
 <script type="text/javascript" src="__BASE__/plupload-2.3.1/js/plupload.full.min.js"></script>
-<AdminLTE.2.1.2nLTE App -->
 <script src="__BASE__/AdminLTE/dist/js/app.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="__KINDEDITOR__/kindeditor.js"></script>
+<script type="text/javascript" src="__KINDEDITOR__/lang/zh_CN.js"></script>
 <script src="__JS__/base/jquery.validate.min.js" type="text/javascript"></script>
 <script src="__JS__/base/jquery.form.js" type="text/javascript"></script>
 <script src="__JS__/base/jquery-confirm.min.js" type="text/javascript"></script>

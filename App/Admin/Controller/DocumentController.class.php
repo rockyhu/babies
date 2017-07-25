@@ -11,7 +11,7 @@ class DocumentController extends AuthController {
     
     public function ajaxDocumentList() {
         if(IS_AJAX){
-            echo D('Document')->ajaxlistDocument(I('get.draw'), I('get.search')['value'], I('get.start'), I('get.length'), I('get.status'), I('get.shuxing'), I('get.pnid'), I('get.nid'), I('get.marketprice'));
+            echo D('Document')->ajaxlistDocument(I('get.draw'), I('get.search')['value'], I('get.start'), I('get.length'), I('get.status'), I('get.shuxing'), I('get.pnid'), I('get.nid'), I('get.order'));
         }
     }
     
@@ -28,7 +28,7 @@ class DocumentController extends AuthController {
             $this->getAuthNavDos();
             $OneDocument = D('Document')->getOneDocument($id);
             $this->assign('OneDocument', $OneDocument);
-            $this->assign('documentnavlist', D('DocumentNav')->getAllDocumentNavListForedit($OneDocument['pnid'], $OneDocument['nid']));
+            $this->assign('documentnavlist', D('DocumentNav')->getAllDocumentNavListForedit($OneDocument['nnid'], $OneDocument['nid']));
     		$this->display();
     	}
     }
@@ -53,36 +53,20 @@ class DocumentController extends AuthController {
     public function addDocument() {
         if (IS_AJAX) {
             echo D('Document')->addDocument(
-                I('post.shopid'),
-                I('post.genlisid'),
                 I('post.sort'),
                 I('post.name'),
-                I('post.pnid'),
+                I('post.nnid'),
                 I('post.nid'),
-                I('post.type'),
+                I('post.istop'),
                 I('post.isrecommand'),
-                I('post.isnew'),
-                I('post.ishot'),
-                I('post.isdiscount'),
-                I('post.issendfree'),
-                I('post.istime'),
-                I('post.isnodiscount'),
+                I('post.isgun'),
+                I('post.ishuan'),
                 I('post.thumb', '', false),
-                I('post.images', '', false),
-                I('post.marketprice'),
-                I('post.productprice'),
-                I('post.costprice'),
-                I('post.total'),
-                I('post.maxbuy'),
-                I('post.sales'),
+                I('post.keyword'),
+                I('post.description'),
+                I('post.info'),
                 I('post.content'),
-                I('post.nocommission'),
-                I('post.hidecommission'),
-                I('post.isreturn'),
-                I('post.isreturntwo'),
-                I('post.isreturnqueue'),
-                I('post.return_appoint_amount'),
-                I('post.dispatchprice'),
+                I('post.readcount'),
                 I('post.status'));
         } else {
             $this->error('非法操作！');
@@ -93,36 +77,20 @@ class DocumentController extends AuthController {
     	if (IS_AJAX) {
     		echo D('Document')->update(
     		    I('post.id'),
-                I('post.shopid'),
-                I('post.genlisid'),
                 I('post.sort'),
                 I('post.name'),
-                I('post.pnid'),
+                I('post.nnid'),
                 I('post.nid'),
-                I('post.type'),
+                I('post.istop'),
                 I('post.isrecommand'),
-                I('post.isnew'),
-                I('post.ishot'),
-                I('post.isdiscount'),
-                I('post.issendfree'),
-                I('post.istime'),
-                I('post.isnodiscount'),
+                I('post.isgun'),
+                I('post.ishuan'),
                 I('post.thumb', '', false),
-                I('post.images', '', false),
-                I('post.marketprice'),
-                I('post.productprice'),
-                I('post.costprice'),
-                I('post.total'),
-                I('post.maxbuy'),
-                I('post.sales'),
+                I('post.keyword'),
+                I('post.description'),
+                I('post.info'),
                 I('post.content'),
-                I('post.nocommission'),
-                I('post.hidecommission'),
-                I('post.isreturn'),
-                I('post.isreturntwo'),
-                I('post.isreturnqueue'),
-                I('post.return_appoint_amount'),
-                I('post.dispatchprice'),
+                I('post.readcount'),
                 I('post.status'));
     	} else {
     		$this->error('非法操作！');

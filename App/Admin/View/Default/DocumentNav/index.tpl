@@ -70,12 +70,11 @@
                                         <thead>
                                         <tr>
                                             <th></th>
-                                            <th>分类ID</th>
-                                            <th>分类名称</th>
-                                            <th>缩略图</th>
-                                            <th>分类排序</th>
+                                            <th>ID</th>
+                                            <th>名称</th>
+                                            <th width="60px">类型</th>
+                                            <th>排序</th>
                                             <th>父分类</th>
-                                            <th width="60px">是否推荐</th>
                                             <th width="60px">是否显示</th>
                                             <th width="130px">创建时间</th>
                                             <th width="75px">操作</th>
