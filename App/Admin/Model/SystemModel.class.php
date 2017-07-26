@@ -19,7 +19,7 @@ class SystemModel extends Model{
 	 * 获取系统参数
 	 */
 	public function getOneSystem() {
-	    $system = $this->field('id,merchantpay,resellerpay,minicashout,cashoutfee,minitransfer,epursefee,gouwubifee,shutdownstate,shutdowntitle,shutdowncontent')->where("id=1")->find();
+	    $system = $this->field('id,webname,keywords,description,copyright,beian,shutdownstate,shutdowntitle,shutdowncontent')->where("id=1")->find();
 	    return $system;
 	}
 
@@ -27,19 +27,15 @@ class SystemModel extends Model{
      * 获取系统参数
      */
     public function getSystem() {
-        $system = $this->field('id,merchantpay,resellerpay,minicashout,cashoutfee,minitransfer,epursefee,gouwubifee,shutdownstate,shutdowntitle,shutdowncontent')->where("id=1")->find();
+        $system = $this->field('id,webname,keywords,description,copyright,beian,shutdownstate,shutdowntitle,shutdowncontent')->where("id=1")->find();
         $systemconfig = [];//系统配置信息
         if($system) {
             $systemconfig = array(
-                'cashout'=>array(
-                    'minicashout'=>$system['minicashout'],
-                    'cashoutfee'=>$system['cashoutfee']
-                ),
-                'merchantpay'=>$system['merchantpay'],
-                'resellerpay'=>$system['resellerpay'],
-                'epursefee'=>$system['epursefee']/100,
-                'gouwubifee'=>$system['gouwubifee']/100,
-                'minitransfer'=>$system['minitransfer'],
+                'webname'=>$system['webname'],
+                'keywords'=>$system['keywords'],
+                'description'=>$system['description'],
+                'copyright'=>$system['copyright'],
+                'beian'=>$system['beian'],
                 'shutdown'=>array(
                     'shutdownstate'=>$system['shutdownstate'],
                     'shutdowntitle'=>$system['shutdowntitle'],
@@ -51,29 +47,26 @@ class SystemModel extends Model{
     }
 
     /**
-     * @param $id id
-     * @param $merchantpay 招商员资格费用
-     * @param $resellerpay 分销商资格费用
-     * @param $minitransfer 最低转账金额
-     * @param $minicashout 最低提现金额
-     * @param $cashoutfee 提现手续费
-     * @param $epursefee 佣金的百分比进入钱包余额
-     * @param $gouwubifee 佣金的百分比进入消费积分
-     * @param $shutdownstate 系统是否停用
-     * @param $shutdowntitle 维护页面标题
-     * @param $shutdowncontent 维护页面内容提示
+     * 设置站点参数
+     * @param $id
+     * @param $webname 站点名称
+     * @param $keywords 站点关键字
+     * @param $description 站点描述
+     * @param $copyright 站点版权信息
+     * @param $beian 站点备案信息
+     * @param $shutdownstate
+     * @param $shutdowntitle
+     * @param $shutdowncontent
      * @return int
      */
-	public function setSystem($id, $merchantpay, $resellerpay, $minitransfer, $minicashout, $cashoutfee, $epursefee, $gouwubifee, $shutdownstate, $shutdowntitle, $shutdowncontent) {
+	public function setSystem($id, $webname, $keywords, $description, $copyright, $beian, $shutdownstate, $shutdowntitle, $shutdowncontent) {
 	    $data = array(
 	        'id'=>$id,
-            'merchantpay'=>$merchantpay,
-            'resellerpay'=>$resellerpay,
-	        'minitransfer'=>$minitransfer,
-            'minicashout'=>$minicashout,
-            'cashoutfee'=>$cashoutfee,
-            'epursefee'=>$epursefee,
-            'gouwubifee'=>$gouwubifee,
+            'webname'=>$webname,
+            'keywords'=>$keywords,
+	        'description'=>$description,
+            'copyright'=>$copyright,
+            'beian'=>$beian,
 			'shutdownstate'=>$shutdownstate == 1 ? 1 : 0,
 	        'shutdowntitle'=>$shutdowntitle,
 	        'shutdowncontent'=>$shutdowncontent,
